@@ -2,6 +2,7 @@ import * as React from "react";
 import Header from "./Header";
 import Progress from "./Progress";
 import Button from "@mui/material/Button";
+import LoginForm from "./LoginForm/LoginForm";
 
 /* global console, Excel, require  */
 
@@ -11,6 +12,7 @@ export interface AppProps {
 }
 
 export const App: React.FC<AppProps> = ({ title, isOfficeInitialized }) => {
+  const [authenticated, setAuthenticated] = React.useState(false);
   const click = async () => {
     try {
       await Excel.run(async (context) => {
@@ -46,9 +48,7 @@ export const App: React.FC<AppProps> = ({ title, isOfficeInitialized }) => {
   return (
     <div className="ms-welcome">
       <Header />
-      <Button variant="contained" onClick={click}>
-        Click Me!
-      </Button>
+      {!authenticated && <LoginForm />}
     </div>
   );
 };
