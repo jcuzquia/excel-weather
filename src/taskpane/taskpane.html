@@ -10,11 +10,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Contoso Task Pane Add-in</title>
 
+    <script type="text/javascript">
+        // Office js deletes window.history.pushState and window.history.replaceState. Cache them and restore them
+        window.historyBackup = {
+            replaceState: window.history.replaceState,
+            pushState: window.history.pushState
+        };
+    </script>
     <!-- Office JavaScript API -->
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+    <script type="text/javascript">
+        window.history.replaceState = window.historyBackup.replaceState;
+        window.history.pushState = window.historyBackup.pushState;
+    </script>
 
     <!-- For more information on Fluent UI, visit https://developer.microsoft.com/fluentui#/. -->
-    <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css"/>
+    <link rel="stylesheet"
+        href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css" />
 
     <!-- Template styles -->
     <link href="taskpane.css" rel="stylesheet" type="text/css" />
