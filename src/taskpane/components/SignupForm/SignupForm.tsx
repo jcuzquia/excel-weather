@@ -11,8 +11,12 @@ import { Link as RouterLink } from "react-router-dom";
 import { useSignup } from "../../../hooks/useSignup";
 import { isValidEmail } from "../../../utils/validations";
 import theme from "../../styles/theme";
+import { useCollection } from "../../../hooks/useCollection";
+import db from "../../../firebase/db";
+import { IUser } from "../../../interfaces/IUser";
 
 type FormData = {
+  username: string;
   email: string;
   password: string;
 };
@@ -25,10 +29,16 @@ const SignupForm = () => {
     formState: { errors },
   } = useForm<FormData>();
 
-  const { signup, error } = useSignup();
+  const { signup, signupData } = useSignup();
+  const { addNewDocument } = useCollection<IUser>(db.users);
 
-  const onSignupUser: SubmitHandler<FormData> = (data: FormData) => {
-    signup(data.email, data.password);
+  const onSignupUser: SubmitHandler<FormData> = async (data: FormData) => {
+    await signup(data.email, data.password);
+    if (signupData.user) {
+      const { uid, email } = signupData.user;
+      const newUser: IUser = { id: uid, email: email };
+      await addNewDocument(db.users, newUser);
+    }
   };
   return (
     <Box
@@ -50,6 +60,24 @@ const SignupForm = () => {
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
+              type="username"
+              required
+              fullWidth
+              id="username"
+              label="Username:"
+              name="username"
+              autoComplete="username"
+              size="small"
+              {...register("username", {
+                required: "This field is required",
+                minLength: { value: 4, message: "You need at least 6 characters" },
+              })}
+              error={!!errors.email}
+              helperText={errors.email?.message}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
               type="email"
               required
               fullWidth
@@ -58,7 +86,10 @@ const SignupForm = () => {
               name="email"
               autoComplete="email"
               size="small"
-              {...register("email", { required: "This field is required", validate: isValidEmail })}
+              {...register("email", {
+                required: "This field is required",
+                validate: isValidEmail,
+              })}
               error={!!errors.email}
               helperText={errors.email?.message}
             />
@@ -83,7 +114,7 @@ const SignupForm = () => {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color={theme.palette.error.light}>
-              {error}
+              {signupData.error}
             </Typography>
           </Grid>
         </Grid>

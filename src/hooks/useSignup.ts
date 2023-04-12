@@ -1,40 +1,42 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { addDoc } from "firebase/firestore";
+import { FirebaseError } from "firebase/app";
+import { User, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../firebase/config";
-import db from "../firebase/db";
-import { IUser } from "../interfaces/IUser";
+import { saveNewUser } from "../firebase/dbUser";
+import { authErrors } from "../firebase/firebase-errors";
+
+interface SignupData {
+  user: User | null;
+  error: string | null;
+  errorCode: string | null;
+  isPending: boolean;
+}
+
+const initialData: SignupData = {
+  user: null,
+  error: null,
+  errorCode: null,
+  isPending: false,
+};
 
 export const useSignup = () => {
-  const [error, setError] = useState(null);
-  const [isCancelled, setIsCancelled] = useState(false);
-  const [isPending, setIsPending] = useState(false);
+  const [signupData, setSignupData] = useState(initialData);
 
   const signup = async (email: string, password: string, displayName?: string) => {
-    setError(null);
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((res) => {
-        const user = res.user;
-        setIsPending(false);
-        setError(null);
-        updateProfile(user, { displayName });
-        const u: IUser = { email: user.email, id: user.uid };
-        addDoc<IUser>(db.users, u);
-      })
-      .catch((err) => {
-        setIsPending(false);
-        setError(err.message + "Upper Error");
-      });
-    if (!isCancelled) {
-      setIsPending(false);
-      setError(null);
+    setSignupData({ ...initialData, isPending: true });
+    try {
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(user, { displayName });
+      await saveNewUser(user);
+      setSignupData({ ...initialData, user });
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        setSignupData({ user: null, error: authErrors[error.code], errorCode: error.code, isPending: false });
+      } else {
+        setSignupData({ user: null, error: error.message, errorCode: null, isPending: false });
+      }
     }
-    useEffect(() => {
-      return () => {
-        setIsCancelled(true);
-      };
-    }, []);
   };
-  return { error, isPending, signup };
+  return { signupData, signup };
 };
