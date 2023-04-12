@@ -8,9 +8,7 @@ export const useCollection = <T>(collectionRef: CollectionReference<T>) => {
   const addNewDocument = async <T>(collectionRef: CollectionReference<T>, data: T) => {
     try {
       await addDoc<T>(collectionRef, data);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
   useEffect(() => {
     let ref = collection(dbFirestore, collectionRef.path).withConverter(converter());
