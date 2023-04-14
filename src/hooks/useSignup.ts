@@ -24,19 +24,31 @@ export const useSignup = () => {
   const [signupData, setSignupData] = useState(initialData);
 
   const signup = async (email: string, password: string, displayName?: string) => {
-    setSignupData({ ...initialData, isPending: true });
+    await setSignupData({ ...initialData, isPending: true });
     try {
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(user, { displayName });
       await saveNewUser(user);
+
       setSignupData({ ...initialData, user });
+      return user;
     } catch (error) {
       if (error instanceof FirebaseError) {
         setSignupData({ user: null, error: authErrors[error.code], errorCode: error.code, isPending: false });
       } else {
         setSignupData({ user: null, error: error.message, errorCode: null, isPending: false });
       }
+      return null;
     }
+
+    // useEffect(() => {
+    //   const unsub = onAuthStateChanged(auth, (user) => {
+    //     setSignupData((state) => ({ ...state, user }));
+    //   });
+    //   return () => {
+    //     unsub();
+    //   };
+    // }, []);
   };
   return { signupData, signup };
 };

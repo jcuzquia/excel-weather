@@ -4,6 +4,8 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "./styles/theme";
+import { Provider } from "react-redux";
+import store from "../redux/store";
 
 /* global document, Office, module, require */
 
@@ -13,12 +15,14 @@ const title = "Contoso Task Pane Add-in";
 
 const render = (Component) => {
   ReactDOM.render(
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AppContainer>
-        <Component title={title} isOfficeInitialized={isOfficeInitialized} />
-      </AppContainer>
-    </ThemeProvider>,
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <AppContainer>
+          <Component title={title} isOfficeInitialized={isOfficeInitialized} />
+        </AppContainer>
+      </ThemeProvider>
+    </Provider>,
     document.getElementById("container")
   );
 };

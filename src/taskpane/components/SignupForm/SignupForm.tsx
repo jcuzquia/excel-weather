@@ -3,17 +3,16 @@ import { Box, Divider, Typography } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Link as RouterLink } from "react-router-dom";
 import { useSignup } from "../../../hooks/useSignup";
 import { isValidEmail } from "../../../utils/validations";
 import theme from "../../styles/theme";
-import { useCollection } from "../../../hooks/useCollection";
-import db from "../../../firebase/db";
-import { IUser } from "../../../interfaces/IUser";
+import Link from "../ui/Link/Link";
+import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { login } from "../../../redux/userSlice";
 
 type FormData = {
   username: string;
@@ -30,14 +29,14 @@ const SignupForm = () => {
   } = useForm<FormData>();
 
   const { signup, signupData } = useSignup();
-  const { addNewDocument } = useCollection<IUser>(db.users);
+  const history = useHistory();
+  const dispatch = useDispatch();
 
   const onSignupUser: SubmitHandler<FormData> = async (data: FormData) => {
-    await signup(data.email, data.password);
-    if (signupData.user) {
-      const { uid, email } = signupData.user;
-      const newUser: IUser = { id: uid, email: email };
-      await addNewDocument(db.users, newUser);
+    const user = await signup(data.email, data.password);
+    dispatch(login({ email: user.email, id: user.uid }));
+    if (user) {
+      history.push("/");
     }
   };
   return (
@@ -72,8 +71,8 @@ const SignupForm = () => {
                 required: "This field is required",
                 minLength: { value: 4, message: "You need at least 6 characters" },
               })}
-              error={!!errors.email}
-              helperText={errors.email?.message}
+              error={!!errors.username}
+              helperText={errors.username?.message}
             />
           </Grid>
           <Grid item xs={12}>
@@ -123,9 +122,7 @@ const SignupForm = () => {
         </Button>
         <Grid container justifyContent="flex-end">
           <Grid item>
-            <RouterLink to={"/dashboard"}>
-              <Link>Already have an account? Sign in</Link>
-            </RouterLink>
+            <Link href="/login">Already have an account? Sign in</Link>
           </Grid>
         </Grid>
       </Box>
