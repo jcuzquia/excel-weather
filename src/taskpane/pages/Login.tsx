@@ -12,6 +12,10 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { isValidEmail } from "../../utils/validations";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useLogin } from "../../hooks/useLogin";
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/userSlice";
+import { useHistory } from "react-router-dom";
 type FormData = {
   email: string;
   password: string;
@@ -23,10 +27,17 @@ const Login = () => {
     // watch,
     formState: { errors },
   } = useForm<FormData>();
+  const { loginWithEmailAndPassword } = useLogin();
+  const dispatch = useDispatch();
+  const history = useHistory();
 
-  const onLoginUser: SubmitHandler<FormData> = (data: FormData) => {
+  const onLoginUser: SubmitHandler<FormData> = async (data: FormData) => {
     console.log(data);
-    // TODO: Login
+    const user = await loginWithEmailAndPassword(data.email, data.password);
+    dispatch(login({ email: user.email, id: user.uid }));
+    if (user) {
+      history.push("/");
+    }
   };
   return (
     <Box

@@ -24,7 +24,7 @@ export const useSignup = () => {
   const [signupData, setSignupData] = useState(initialData);
 
   const signup = async (email: string, password: string, displayName?: string) => {
-    await setSignupData({ ...initialData, isPending: true });
+    setSignupData({ ...initialData, isPending: true });
     try {
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(user, { displayName });
@@ -40,15 +40,7 @@ export const useSignup = () => {
       }
       return null;
     }
-
-    // useEffect(() => {
-    //   const unsub = onAuthStateChanged(auth, (user) => {
-    //     setSignupData((state) => ({ ...state, user }));
-    //   });
-    //   return () => {
-    //     unsub();
-    //   };
-    // }, []);
   };
+
   return { signupData, signup };
 };
