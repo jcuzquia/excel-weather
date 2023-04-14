@@ -1,20 +1,20 @@
-import { User, onAuthStateChanged } from "firebase/auth";
-import { useState, useEffect } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useDispatch } from "react-redux";
 import { auth } from "../firebase/config";
+import { login } from "../redux/userSlice";
 
 export const useAuth = () => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setCurrentUser(user);
-      } else {
-        setCurrentUser(null);
-      }
-    });
-  });
-  return { currentUser };
+  const dispatch = useDispatch();
+  const authLogin = async (email: string, password: string) => {
+    try {
+      const credentials = await signInWithEmailAndPassword(auth, email, password);
+      const { email: e, uid } = credentials.user;
+      dispatch(login({ email: e, id: uid }));
+    } catch (error) {
+      return null;
+    }
+  };
+  return { authLogin };
 };
 
 export default useAuth;

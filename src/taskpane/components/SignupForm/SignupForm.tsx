@@ -28,13 +28,14 @@ const SignupForm = () => {
     formState: { errors },
   } = useForm<FormData>();
 
-  const { signup, signupData } = useSignup();
+  const { signupWithEmailAndPassword, errorMessage } = useSignup();
   const history = useHistory();
   const dispatch = useDispatch();
 
   const onSignupUser: SubmitHandler<FormData> = async (data: FormData) => {
-    const user = await signup(data.email, data.password);
+    const user = await signupWithEmailAndPassword(data.email, data.password);
     dispatch(login({ email: user.email, id: user.uid }));
+
     if (user) {
       history.push("/");
     }
@@ -113,7 +114,7 @@ const SignupForm = () => {
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color={theme.palette.error.light}>
-              {signupData.error}
+              {errorMessage}
             </Typography>
           </Grid>
         </Grid>

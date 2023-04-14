@@ -1,54 +1,21 @@
 import { useState } from "react";
-
-import { FirebaseError } from "firebase/app";
-import { User, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "../firebase/config";
-import { saveNewUser } from "../firebase/dbUser";
-import { authErrors } from "../firebase/firebase-errors";
-
-interface SignupData {
-  user: User | null;
-  error: string | null;
-  errorCode: string | null;
-  isPending: boolean;
-}
-
-const initialData: SignupData = {
-  user: null,
-  error: null,
-  errorCode: null,
-  isPending: false,
-};
+import { useFirebase } from "react-redux-firebase";
 
 export const useSignup = () => {
-  const [signupData, setSignupData] = useState(initialData);
+  const firebase = useFirebase();
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  const signup = async (email: string, password: string, displayName?: string) => {
-    await setSignupData({ ...initialData, isPending: true });
+  const signupWithEmailAndPassword = async (email: string, password: string) => {
+    console.log("starting signup");
     try {
-      const { user } = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(user, { displayName });
-      await saveNewUser(user);
-
-      setSignupData({ ...initialData, user });
-      return user;
+      const userInfo = await firebase.createUser({ email, password });
+      console.log("User infor is:", userInfo);
+      return userInfo;
     } catch (error) {
-      if (error instanceof FirebaseError) {
-        setSignupData({ user: null, error: authErrors[error.code], errorCode: error.code, isPending: false });
-      } else {
-        setSignupData({ user: null, error: error.message, errorCode: null, isPending: false });
-      }
+      console.log(error);
+      setErrorMessage(error.message);
       return null;
     }
-
-    // useEffect(() => {
-    //   const unsub = onAuthStateChanged(auth, (user) => {
-    //     setSignupData((state) => ({ ...state, user }));
-    //   });
-    //   return () => {
-    //     unsub();
-    //   };
-    // }, []);
   };
-  return { signupData, signup };
+  return { signupWithEmailAndPassword, errorMessage };
 };

@@ -1,11 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useSelector } from "react-redux";
 import userSlice from "./userSlice";
+import { firebaseReducer, actionTypes } from "react-redux-firebase";
+import { firestoreReducer } from "redux-firestore";
 
 const store = configureStore({
   reducer: {
     user: userSlice,
+    firebaseReducer,
+    firestoreReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ serializableCheck: { ignoredActions: [actionTypes.LOGIN, actionTypes.AUTH_LINK_ERROR] } }),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

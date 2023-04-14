@@ -18,7 +18,6 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     login: (state: AuthState, action: ActionType) => {
-      console.log("Calling login in dispatch: ", action.payload);
       state.user = action.payload;
       return state;
     },
