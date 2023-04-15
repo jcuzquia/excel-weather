@@ -1,33 +1,25 @@
-import { useState } from "react";
-
 import { FirebaseError } from "firebase/app";
-import { User, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
+import { useState } from "react";
 import { auth } from "../firebase/config";
-import { authErrors } from "../firebase/firebase-errors";
-
-interface SignupData {
-  user: User | null;
-  error: string | null;
-  errorCode: string | null;
-  isPending: boolean;
-}
-
-const initialData: SignupData = {
-  user: null,
-  error: null,
-  errorCode: null,
-  isPending: false,
-};
 
 export const useLogout = () => {
-  const logout = () => {
-    signOut(auth)
-      .then(() => {
-        console.log("user signed out");
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+  const [isError, setIsError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      setIsError(false);
+      setErrorMessage(null);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        setErrorMessage(error.message);
+      } else {
+        setIsError(true);
+        setErrorMessage("Something happened");
+      }
+    }
   };
-  return { logout };
+  return { logout, isError, errorMessage };
 };

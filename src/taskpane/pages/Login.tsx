@@ -32,11 +32,10 @@ const Login = () => {
   const history = useHistory();
 
   const onLoginUser: SubmitHandler<FormData> = async (data: FormData) => {
-    console.log(data);
     const user = await loginWithEmailAndPassword(data.email, data.password);
     dispatch(login({ email: user.email, id: user.uid }));
     if (user) {
-      history.push("/");
+      history.push("/dashboard");
     }
   };
   return (

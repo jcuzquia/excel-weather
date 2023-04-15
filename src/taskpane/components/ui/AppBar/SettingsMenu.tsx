@@ -1,6 +1,7 @@
 import { Avatar, Box, IconButton, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
 import React from "react";
 import { useLogout } from "../../../../hooks/useLogout";
+import Link from "../Link/Link";
 
 const SettingsMenu = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -42,7 +43,9 @@ const SettingsMenu = () => {
           <Typography textAlign="center">Account</Typography>
         </MenuItem>
         <MenuItem onClick={handleCloseUserMenu}>
-          <Typography textAlign="center">Dashboard</Typography>
+          <Link href="/dashboard">
+            <Typography textAlign="center">Dashboard</Typography>
+          </Link>
         </MenuItem>
         <MenuItem onClick={logout}>
           <Typography textAlign="center">Logout</Typography>

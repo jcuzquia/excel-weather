@@ -4,10 +4,34 @@
  */
 
 /* global global, Office, self, window */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/* global console, Excel, require  */
 
 Office.onReady(() => {
   // If needed, Office.js is ready to be called
 });
+
+export const changeCellColor = async () => {
+  try {
+    await Excel.run(async (context) => {
+      /**
+       * Insert your Excel code here
+       */
+      const range = context.workbook.getSelectedRange();
+
+      // Read the range address
+      range.load("address");
+
+      // Update the fill color
+      range.format.fill.color = "yellow";
+
+      await context.sync();
+      console.log(`The range address was ${range.address}.`);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 /**
  * Shows a notification when the add-in command is executed.
