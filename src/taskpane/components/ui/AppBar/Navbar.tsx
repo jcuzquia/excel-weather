@@ -12,8 +12,13 @@ import Typography from "@mui/material/Typography";
 import React from "react";
 import Link from "../Link/Link";
 import SettingsMenu from "./SettingsMenu";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../../../firebase/config";
+import { CircularProgress } from "@mui/material";
 
 const Navbar = () => {
+  const [user, loading] = useAuthState(auth);
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -23,6 +28,10 @@ const Navbar = () => {
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
+
+  if (loading) {
+    return <CircularProgress />;
+  }
 
   return (
     <AppBar position="static">
@@ -81,16 +90,20 @@ const Navbar = () => {
                   <Typography textAlign="center">Home</Typography>
                 </Link>
               </MenuItem>
-              <MenuItem onClick={handleCloseNavMenu}>
-                <Link href={"/signup"}>
-                  <Typography textAlign="center">Signup</Typography>
-                </Link>
-              </MenuItem>
-              <MenuItem onClick={handleCloseNavMenu}>
-                <Link href={"/login"}>
-                  <Typography textAlign="center">Login</Typography>
-                </Link>
-              </MenuItem>
+              {!user && (
+                <MenuItem onClick={handleCloseNavMenu}>
+                  <Link href={"/signup"}>
+                    <Typography textAlign="center">Signup</Typography>
+                  </Link>
+                </MenuItem>
+              )}
+              {!user && (
+                <MenuItem onClick={handleCloseNavMenu}>
+                  <Link href={"/login"}>
+                    <Typography textAlign="center">Login</Typography>
+                  </Link>
+                </MenuItem>
+              )}
             </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
@@ -118,16 +131,24 @@ const Navbar = () => {
                 Home
               </Button>
             </Link>
-            <Link href="/signup">
-              <Button onClick={handleCloseNavMenu} sx={{ my: 2, color: "white", display: "block" }}>
-                Signup
-              </Button>
-            </Link>
-            <Link href="/login">
-              <Button onClick={handleCloseNavMenu} sx={{ my: 2, color: "white", display: "block" }} variant="outlined">
-                Login
-              </Button>
-            </Link>
+            {!user && (
+              <Box>
+                <Link href="/signup">
+                  <Button onClick={handleCloseNavMenu} sx={{ my: 2, color: "white", display: "block" }}>
+                    Signup
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: "white", display: "block" }}
+                    variant="outlined"
+                  >
+                    Login
+                  </Button>
+                </Link>
+              </Box>
+            )}
           </Box>
           <SettingsMenu />
         </Toolbar>

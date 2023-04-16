@@ -1,18 +1,20 @@
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { Box, Divider, Typography } from "@mui/material";
+import { Box, CircularProgress, Divider, Typography } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
+import { addDoc } from "firebase/firestore";
 import React from "react";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useSignup } from "../../../hooks/useSignup";
+import { useHistory } from "react-router-dom";
+import { auth } from "../../../firebase/config";
+import db from "../../../firebase/db";
+import { IUser } from "../../../interfaces/IUser";
 import { isValidEmail } from "../../../utils/validations";
 import theme from "../../styles/theme";
 import Link from "../ui/Link/Link";
-import { useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { login } from "../../../redux/userSlice";
 
 type FormData = {
   username: string;
@@ -28,15 +30,17 @@ const SignupForm = () => {
     formState: { errors },
   } = useForm<FormData>();
 
-  const { signup, signupData } = useSignup();
+  const [createUserWithEmailAndPassword, user, authLoading, authError] = useCreateUserWithEmailAndPassword(auth);
   const history = useHistory();
-  const dispatch = useDispatch();
 
   const onSignupUser: SubmitHandler<FormData> = async (data: FormData) => {
-    const user = await signup(data.email, data.password);
-    dispatch(login({ email: user.email, id: user.uid }));
-    if (user) {
-      history.push("/");
+    try {
+      const res = await createUserWithEmailAndPassword(data.email, data.password);
+      const newUser: IUser = { email: res.user.email, id: res.user.uid };
+      addDoc<IUser>(db.users, newUser);
+      history.push("/dashboard");
+    } catch (error) {
+      console.log("Error on Signup user");
     }
   };
   return (
@@ -112,9 +116,13 @@ const SignupForm = () => {
             />
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="body1" color={theme.palette.error.light}>
-              {signupData.error}
-            </Typography>
+            {authLoading ? (
+              <CircularProgress />
+            ) : (
+              <Typography variant="body1" color={theme.palette.error.light}>
+                {authError}
+              </Typography>
+            )}
           </Grid>
         </Grid>
         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>

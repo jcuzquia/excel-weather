@@ -1,41 +1,43 @@
 import React from "react";
 
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { CircularProgress } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { isValidEmail } from "../../utils/validations";
+import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useLogin } from "../../hooks/useLogin";
-import { useDispatch } from "react-redux";
-import { login } from "../../redux/userSlice";
 import { useHistory } from "react-router-dom";
+import { auth } from "../../firebase/config";
+import { isValidEmail } from "../../utils/validations";
+import theme from "../styles/theme";
 type FormData = {
   email: string;
   password: string;
 };
-const Login = () => {
+const LoginPage = () => {
   const {
     register,
     handleSubmit,
     // watch,
     formState: { errors },
   } = useForm<FormData>();
-  const { loginWithEmailAndPassword } = useLogin();
-  const dispatch = useDispatch();
+
+  const [signInWithEmailAndPassword, , loading, error] = useSignInWithEmailAndPassword(auth);
   const history = useHistory();
 
   const onLoginUser: SubmitHandler<FormData> = async (data: FormData) => {
-    const user = await loginWithEmailAndPassword(data.email, data.password);
-    dispatch(login({ email: user.email, id: user.uid }));
-    if (user) {
+    const res = await signInWithEmailAndPassword(data.email, data.password);
+    if (res.user) {
       history.push("/dashboard");
+    } else {
+      return null;
     }
   };
   return (
@@ -97,6 +99,8 @@ const Login = () => {
         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
           Sign In
         </Button>
+        {loading && <CircularProgress />}{" "}
+        {error && <Typography color={theme.palette.error.dark}>{error.message}</Typography>}
         <Grid container>
           <Grid item xs>
             <Link href="#" variant="body2">
@@ -114,4 +118,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;

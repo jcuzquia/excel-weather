@@ -1,19 +1,20 @@
 import React, { FC } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { Redirect, Route, RouteProps } from "react-router-dom";
-import useAuth from "../../../hooks/useAuth";
+import { auth } from "../../../firebase/config";
 
 interface Props extends RouteProps {
   path: string;
   children: React.ReactNode;
 }
 const PrivateRoute: FC<Props> = ({ children, ...props }) => {
-  const { currentUser } = useAuth();
+  const [user] = useAuthState(auth);
 
   return (
     <Route
       {...props}
       render={() => {
-        if (currentUser) {
+        if (user) {
           return children;
         } else {
           return <Redirect to={"/login"} />;

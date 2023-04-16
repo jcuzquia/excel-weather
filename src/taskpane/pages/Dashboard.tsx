@@ -1,8 +1,8 @@
-import { Box, Button, Grid, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Grid, TextField, Typography } from "@mui/material";
 import React from "react";
-import Link from "../components/ui/Link/Link";
-import { useFetch } from "../../hooks/useFetch";
 import excelWeatherApi from "../../api/excel-weatherApi";
+import { useFetch } from "../../hooks/useFetch";
+import Link from "../components/ui/Link/Link";
 
 const Dashboard = () => {
   const handleNRELWebsite = () => {
@@ -10,18 +10,18 @@ const Dashboard = () => {
     window.open("https://developer.nrel.gov/signup/");
   };
 
-  const { status, fetchData } = useFetch<any>(excelWeatherApi);
+  const { status, fetchData, isPending } = useFetch<any>(excelWeatherApi);
 
   const checkAPI = async () => {
     try {
-      await fetchData("alt-fuel-stations/v1.json?limit=1&api_key=mp56Z4nzq55AGq6GhvfGAl2gaEVPdPQR2c59dp7W");
+      fetchData("alt-fuel-stations/v1.json?limit=1&api_key=mp56Z4nzq55AGq6GhvfGAl2gaEVPdPQR2c59dp7W");
     } catch (error) {}
   };
   return (
     <Box width={"100%"} sx={{ pt: 3 }}>
-      <Typography variant="h4" textAlign="center">
-        NREL Weather data
-      </Typography>
+      {/* <Typography variant="h4" textAlign="center">
+        NREL Weather data: {documents[0].email}
+      </Typography> */}
       <Box component="form" noValidate p={4}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -39,7 +39,8 @@ const Dashboard = () => {
               name="nrel_api_key"
               size="small"
             />
-            <Button onClick={checkAPI}>Check API</Button>({status === 200 ? "Your API IS Valid" : "NOt valid"})
+            <Button onClick={checkAPI}>{isPending ? <CircularProgress size={"xs"} /> : "Check"}</Button>(
+            {status === 200 ? "Your API IS Valid" : "NOt valid"})
           </Grid>
         </Grid>
       </Box>

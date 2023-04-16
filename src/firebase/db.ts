@@ -13,6 +13,7 @@ const dataPoint = <T>(collectionPath: string) => collection(dbFirestore, collect
 
 const db = {
   users: dataPoint<IUser>("users"),
+  user: (userId: string) => dataPoint<IUser>(`users/${userId}`),
 };
 export { db };
 export default db;

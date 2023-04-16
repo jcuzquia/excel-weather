@@ -1,15 +1,16 @@
 import { Box, Typography } from "@mui/material";
 import React from "react";
-import useAuth from "../../hooks/useAuth";
 import Header from "../components/Header";
 import theme from "../styles/theme";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../firebase/config";
 
 const Main: React.FC = () => {
-  const { currentUser } = useAuth();
+  const [user, ,] = useAuthState(auth);
   return (
     <Box>
       <Header />
-      {currentUser && <Typography color={theme.palette.error.dark}>{currentUser.email}</Typography>}
+      {user && <Typography color={theme.palette.error.dark}>{user.email}</Typography>}
     </Box>
   );
 };

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Route, HashRouter as Router, Switch } from "react-router-dom";
 import Dashboard from "../pages/Dashboard";
-import Login from "../pages/Login";
+import LoginPage from "../pages/LoginPage";
 import Main from "../pages/Main";
 import Signup from "../pages/Signup";
 import Progress from "./Progress";
@@ -27,7 +27,7 @@ export const App: React.FC<AppProps> = ({ title, isOfficeInitialized }) => {
         <Layout>
           <Route exact path="/" component={Main} />
           <Route exact path="/signup" component={Signup} />
-          <Route exact path="/login" component={Login} />
+          <Route exact path="/login" component={LoginPage} />
           <PrivateRoute exact path="/dashboard">
             <Dashboard />
           </PrivateRoute>
