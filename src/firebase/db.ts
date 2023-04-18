@@ -1,6 +1,30 @@
-import { DocumentData, FirestoreDataConverter, QueryDocumentSnapshot, collection } from "firebase/firestore";
+import { DocumentData, FirestoreDataConverter, QueryDocumentSnapshot, collection, doc } from "firebase/firestore";
 import { IUser } from "../interfaces/IUser";
 import { dbFirestore } from "./config";
+
+type PathImpl<T, K extends keyof T> = K extends string
+  ? T[K] extends Record<string, any>
+    ? T[K] extends ArrayLike<any>
+      ? K | `${K}.${PathImpl<T[K], Exclude<keyof T[K], keyof any[]>>}`
+      : K | `${K}.${PathImpl<T[K], keyof T[K]>}`
+    : K
+  : never;
+
+type Path<T> = PathImpl<T, keyof T> | keyof T;
+
+type PathValue<T, P extends Path<T>> = P extends `${infer K}.${infer Rest}`
+  ? K extends keyof T
+    ? Rest extends Path<T[K]>
+      ? PathValue<T[K], Rest>
+      : never
+    : never
+  : P extends keyof T
+  ? T[P]
+  : never;
+
+export type UpdateData<T extends object> = Partial<{
+  [TKey in Path<T>]: PathValue<T, TKey>;
+}>;
 
 export const converter = <T>(): FirestoreDataConverter<T> => ({
   toFirestore: (data: T): DocumentData => {
@@ -9,11 +33,9 @@ export const converter = <T>(): FirestoreDataConverter<T> => ({
   fromFirestore: (snapshot: QueryDocumentSnapshot) => snapshot.data() as T,
 });
 
-const dataPoint = <T>(collectionPath: string) => collection(dbFirestore, collectionPath).withConverter(converter<T>());
-
 const db = {
-  users: dataPoint<IUser>("users"),
-  user: (userId: string) => dataPoint<IUser>(`users/${userId}`),
+  users: collection(dbFirestore, "users").withConverter(converter<IUser>()),
+  user: (userId: string) => doc(dbFirestore, `users/${userId}`).withConverter(converter<IUser>()),
 };
 export { db };
 export default db;

@@ -6,6 +6,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "./styles/theme";
 import { Provider } from "react-redux";
 import store from "../redux/store";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 /* global document, Office, module, require */
 
@@ -14,14 +15,17 @@ let isOfficeInitialized = false;
 const title = "Contoso Task Pane Add-in";
 
 const render = (Component) => {
+  const queryClient = new QueryClient();
   ReactDOM.render(
     <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <AppContainer>
-          <Component title={title} isOfficeInitialized={isOfficeInitialized} />
-        </AppContainer>
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <AppContainer>
+            <Component title={title} isOfficeInitialized={isOfficeInitialized} />
+          </AppContainer>
+        </ThemeProvider>
+      </QueryClientProvider>
     </Provider>,
     document.getElementById("container")
   );

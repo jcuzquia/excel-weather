@@ -4,7 +4,8 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
-import { addDoc } from "firebase/firestore";
+import { updateProfile } from "firebase/auth";
+import { setDoc } from "firebase/firestore";
 import React from "react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -30,17 +31,19 @@ const SignupForm = () => {
     formState: { errors },
   } = useForm<FormData>();
 
-  const [createUserWithEmailAndPassword, user, authLoading, authError] = useCreateUserWithEmailAndPassword(auth);
+  const [createUserWithEmailAndPassword, , authLoading, authError] = useCreateUserWithEmailAndPassword(auth);
   const history = useHistory();
 
   const onSignupUser: SubmitHandler<FormData> = async (data: FormData) => {
     try {
       const res = await createUserWithEmailAndPassword(data.email, data.password);
-      const newUser: IUser = { email: res.user.email, id: res.user.uid };
-      addDoc<IUser>(db.users, newUser);
+      await updateProfile(res.user, { displayName: data.username });
+      const newUser: IUser = { email: res.user.email, validNRELAPIKey: false };
+      setDoc<IUser>(db.user(res.user.uid), newUser);
       history.push("/dashboard");
     } catch (error) {
-      console.log("Error on Signup user");
+      // eslint-disable-next-line no-undef
+      console.error("Error on Signup user");
     }
   };
   return (
