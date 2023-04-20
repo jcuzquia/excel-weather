@@ -10,7 +10,7 @@ type ActionType = {
 };
 
 const initialState: CoordinatesState = {
-  coordinates: null,
+  coordinates: { lat: 10.99835602, lng: 77.01502627 },
 };
 
 export const coordinatesSlice = createSlice({

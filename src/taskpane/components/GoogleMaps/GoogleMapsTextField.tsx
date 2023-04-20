@@ -45,6 +45,7 @@ const GoogleMapsTextField = () => {
         fullWidth
         onChange={handleSelect}
         onInputChange={handleAddressChange}
+        isOptionEqualToValue={(option, value) => option === value}
         renderInput={(params) => (
           <TextField
             {...params}

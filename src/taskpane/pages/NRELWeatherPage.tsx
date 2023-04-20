@@ -3,18 +3,7 @@ import Typography from "@mui/material/Typography";
 import React from "react";
 import GoogleMapsTextField from "../components/GoogleMaps/GoogleMapsTextField";
 import Map from "../components/GoogleMaps/Map";
-import { SelectorOptions } from "../../interfaces/SelectorOptions";
-const currencies: SelectorOptions[] = [
-  {
-    value: "USD",
-  },
-  {
-    value: "EUR",
-  },
-  {
-    value: "BTC",
-  },
-];
+
 const NRELWeatherPage: React.FC = () => {
   return (
     <Box width={"100%"} display={"flex"} alignItems={"center"} flexDirection={"column"}>

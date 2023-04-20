@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-
+import LocationSearchingIcon from "@mui/icons-material/LocationSearching";
 interface Props {
   lat: number;
   lng: number;
@@ -7,7 +7,7 @@ interface Props {
 
 const Marker: FC<Props> = ({ lat, lng }) => {
   console.log(lat, lng);
-  return <div>Marker</div>;
+  return <LocationSearchingIcon color="success" />;
 };
 
 export default Marker;
