@@ -3,8 +3,6 @@ import { Avatar, Box, Divider, Paper, Typography } from "@mui/material";
 import React from "react";
 import Link from "../ui/Link/Link";
 
-interface Props {}
-
 const NRELMenu: React.FC = () => {
   return (
     <Box display={"flex"} pt={2} flexDirection={"column"}>
@@ -21,7 +19,7 @@ const NRELMenu: React.FC = () => {
               </Avatar>
             </Box>
             <Box flexGrow={1}>
-              <Link href="nrel-weather">
+              <Link href="/nrel-weather">
                 <Typography variant="body1">Get Available Weather Data</Typography>
               </Link>
             </Box>

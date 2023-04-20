@@ -13,8 +13,8 @@ const initialState: AuthState = {
   user: null,
 };
 
-export const userSlice = createSlice({
-  name: "user",
+export const userDBSlice = createSlice({
+  name: "userDB",
   initialState,
   reducers: {
     login: (state: AuthState, action: ActionType) => {
@@ -24,7 +24,7 @@ export const userSlice = createSlice({
     logout: (state) => void (state.user = null),
   },
 });
-export const { login, logout } = userSlice.actions;
+export const { login, logout } = userDBSlice.actions;
 export const selectUser = (state: RootState) => state.user.user;
 
-export default userSlice.reducer;
+export default userDBSlice.reducer;

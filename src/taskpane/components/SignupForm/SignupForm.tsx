@@ -16,6 +16,8 @@ import { IUser } from "../../../interfaces/IUser";
 import { isValidEmail } from "../../../utils/validations";
 import theme from "../../styles/theme";
 import Link from "../ui/Link/Link";
+import { useDispatch } from "react-redux";
+import { login } from "../../../redux/userSlice";
 
 type FormData = {
   username: string;
@@ -33,13 +35,16 @@ const SignupForm = () => {
 
   const [createUserWithEmailAndPassword, , authLoading, authError] = useCreateUserWithEmailAndPassword(auth);
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const onSignupUser: SubmitHandler<FormData> = async (data: FormData) => {
     try {
       const res = await createUserWithEmailAndPassword(data.email, data.password);
       await updateProfile(res.user, { displayName: data.username });
-      const newUser: IUser = { email: res.user.email, validNRELAPIKey: false };
-      setDoc<IUser>(db.user(res.user.uid), newUser);
+      const newUser: IUser = { email: res.user.email, validNRELAPIKey: false, ref: db.user(res.user.uid) };
+      await setDoc<IUser>(db.user(res.user.uid), newUser);
+
+      dispatch(login(newUser));
       history.push("/dashboard");
     } catch (error) {
       // eslint-disable-next-line no-undef

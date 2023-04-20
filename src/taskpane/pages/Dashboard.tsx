@@ -2,10 +2,7 @@ import { Box, Grid, Typography } from "@mui/material";
 import React from "react";
 import NRELAPIKEYForm from "../components/NRELAPIKeyForm/NRELAPIKEYForm";
 import Link from "../components/ui/Link/Link";
-interface Props {
-  userUid: string;
-}
-const Dashboard: React.FC<Props> = ({ userUid }) => {
+const Dashboard: React.FC = () => {
   const handleNRELWebsite = () => {
     // eslint-disable-next-line no-undef
     window.open("https://developer.nrel.gov/signup/");
@@ -21,7 +18,7 @@ const Dashboard: React.FC<Props> = ({ userUid }) => {
               If you don&apos;t have one, you can get one for free
               <Link onClick={handleNRELWebsite}> here:</Link>
             </Typography>
-            <NRELAPIKEYForm userUid={userUid} />
+            <NRELAPIKEYForm />
           </Grid>
         </Grid>
       </Box>

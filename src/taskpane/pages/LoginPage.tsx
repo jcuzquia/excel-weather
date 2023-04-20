@@ -1,20 +1,24 @@
 import React from "react";
 
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { CircularProgress } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
+import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { getDoc } from "firebase/firestore";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { auth } from "../../firebase/config";
+import db from "../../firebase/db";
+import { useAppDispatch } from "../../redux/store";
+import { login } from "../../redux/userSlice";
 import { isValidEmail } from "../../utils/validations";
 import theme from "../styles/theme";
 type FormData = {
@@ -28,16 +32,22 @@ const LoginPage = () => {
     // watch,
     formState: { errors },
   } = useForm<FormData>();
-
-  const [signInWithEmailAndPassword, , loading, error] = useSignInWithEmailAndPassword(auth);
+  const dispatch = useAppDispatch();
   const history = useHistory();
+  const [signInWithEmailAndPassword, , loading, error] = useSignInWithEmailAndPassword(auth);
 
   const onLoginUser: SubmitHandler<FormData> = async (data: FormData) => {
-    const res = await signInWithEmailAndPassword(data.email, data.password);
-    if (res.user) {
+    try {
+      const res = await signInWithEmailAndPassword(data.email, data.password);
+      if (res.user) {
+        //login successful
+        const user = (await getDoc(db.user(res.user.uid))).data();
+        dispatch(login(user));
+      }
+
       history.push("/dashboard");
-    } else {
-      return null;
+    } catch (err) {
+      console.error(err.message);
     }
   };
   return (
@@ -97,10 +107,14 @@ const LoginPage = () => {
         </Grid>
         <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-          Sign In
+          {loading ? <CircularProgress /> : "Sign In"}
         </Button>
-        {loading && <CircularProgress />}{" "}
-        {error && <Typography color={theme.palette.error.dark}>{error.message}</Typography>}
+        {error && (
+          <Typography variant="body1" color={theme.palette.error.light}>
+            {error.message}
+          </Typography>
+        )}
+
         <Grid container>
           <Grid item xs>
             <Link href="#" variant="body2">

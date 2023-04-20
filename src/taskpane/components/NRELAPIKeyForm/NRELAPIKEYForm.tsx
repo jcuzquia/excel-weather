@@ -1,40 +1,32 @@
-import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, TextField } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import excelWeatherApi from "../../../api/excel-weatherApi";
-import db, { UpdateData } from "../../../firebase/db";
-import { useDocument } from "../../../hooks/useDocument";
+import db from "../../../firebase/db";
 import { IUser } from "../../../interfaces/IUser";
+import { selectUser } from "../../../redux/userSlice";
 import NRELMenu from "../NRELMenu/NRELMenu";
-interface Props {
-  userUid: string;
-}
+import { useTypedSelector } from "../../../redux/store";
 
-const NRELAPIKEYForm: React.FC<Props> = ({ userUid }) => {
-  const [key, setKey] = useState<string>("");
-  const userRef = db.user(userUid);
-  const { data, firestoreError, isLoading } = useDocument<IUser>(userRef);
+const NRELAPIKEYForm = () => {
+  const user = useTypedSelector(selectUser);
+  const [key, setKey] = useState<string>(user.nrelAPIKey);
   const [keyIsValid, setKeyIsValid] = useState(false);
-  const {
-    data: nrelData,
-    error,
-    isError,
-    isFetching,
-    refetch,
-  } = useQuery({
+
+  const { error, isError, isFetching, refetch, isSuccess } = useQuery({
     queryKey: ["testData"],
     queryFn: async () => {
       if (key) {
-        const { data } = await excelWeatherApi.get(`alt-fuel-stations/v1.json?limit=1&api_key=${key}`);
+        const { data, status } = await excelWeatherApi.get(`alt-fuel-stations/v1.json?limit=1&api_key=${key}`);
         let validAPI: boolean;
-        if (!isError && nrelData && !isFetching) {
+        if (status === 200) {
           validAPI = true;
         } else {
           validAPI = false;
         }
-        const updates: UpdateData<IUser> = { nrelAPIKey: key, validNRELAPIKey: validAPI };
-        await updateDoc(db.user(userUid), updates);
+        const updateUser: IUser = { ...user, validNRELAPIKey: validAPI };
+        await updateDoc(db.user(user.id), updateUser);
         setKey(key);
         setKeyIsValid(validAPI);
         return data;
@@ -56,13 +48,11 @@ const NRELAPIKEYForm: React.FC<Props> = ({ userUid }) => {
   } else {
     errorMessage = "There was an error with this API Key";
   }
+
   useEffect(() => {
     refetch();
-    if (data) {
-      setKey(data.nrelAPIKey);
-      setKeyIsValid(data.validNRELAPIKey);
-    }
-  }, [data]);
+  }, []);
+  console.log("err before render:", isError, "Is success:", isSuccess);
 
   return (
     <Box>
@@ -92,7 +82,6 @@ const NRELAPIKEYForm: React.FC<Props> = ({ userUid }) => {
           </Button>
         </Box>
       </Box>
-      {firestoreError && <Typography variant="body1">{firestoreError.message}</Typography>}
       {keyIsValid && <NRELMenu />}
     </Box>
   );

@@ -1,13 +1,13 @@
-import App from "./components/App";
-import { AppContainer } from "react-hot-loader";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import theme from "./styles/theme";
+import { AppContainer } from "react-hot-loader";
 import { Provider } from "react-redux";
 import store from "../redux/store";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
+import App from "./components/App";
+import theme from "./styles/theme";
+// eslint-disable-next-line no-redeclare
 /* global document, Office, module, require */
 
 let isOfficeInitialized = false;

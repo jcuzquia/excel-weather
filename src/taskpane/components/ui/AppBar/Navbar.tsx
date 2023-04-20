@@ -10,14 +10,13 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import React from "react";
+import { selectUser } from "../../../../redux/userSlice";
 import Link from "../Link/Link";
 import SettingsMenu from "./SettingsMenu";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../../../../firebase/config";
-import { CircularProgress } from "@mui/material";
+import { useTypedSelector } from "../../../../redux/store";
 
 const Navbar = () => {
-  const [user, loading] = useAuthState(auth);
+  const user = useTypedSelector(selectUser);
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
@@ -28,10 +27,6 @@ const Navbar = () => {
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
-
-  if (loading) {
-    return <CircularProgress />;
-  }
 
   return (
     <AppBar position="static">

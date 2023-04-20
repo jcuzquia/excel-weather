@@ -1,32 +1,41 @@
 import { Avatar, Box, IconButton, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
-import React from "react";
-import Link from "../Link/Link";
-import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { auth } from "../../../../firebase/config";
+import { logout, selectUser } from "../../../../redux/userSlice";
+import Link from "../Link/Link";
+import { useTypedSelector } from "../../../../redux/store";
 
 const SettingsMenu = () => {
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const [signOut, loading, error] = useSignOut(auth);
-  const [user, userLoading, userError] = useAuthState(auth);
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
+  const anchorElUser = React.useRef<null | HTMLElement>(null);
+  const [open, setOpen] = useState(false);
+  const user = useTypedSelector(selectUser);
+  const dispatch = useDispatch();
+
+  const handleOpenUserMenu = () => {
+    setOpen(true);
   };
   const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
+    setOpen(false);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    auth.signOut();
   };
 
   if (user) {
     return (
-      <Box sx={{ flexGrow: 0 }}>
+      <Box sx={{ flexGrow: 0 }} ref={anchorElUser}>
         <Tooltip title="Open settings">
           <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
             <Avatar alt="Remy Sharp" />
           </IconButton>
         </Tooltip>
         <Menu
-          sx={{ mt: "45px" }}
+          sx={{ mt: "45px", display: { xs: "block", md: "none" } }}
           id="menu-appbar"
-          anchorEl={anchorElUser}
+          anchorEl={anchorElUser.current}
           anchorOrigin={{
             vertical: "top",
             horizontal: "right",
@@ -36,7 +45,7 @@ const SettingsMenu = () => {
             vertical: "top",
             horizontal: "right",
           }}
-          open={Boolean(anchorElUser)}
+          open={open}
           onClose={handleCloseUserMenu}
         >
           <MenuItem onClick={handleCloseUserMenu}>
@@ -50,14 +59,14 @@ const SettingsMenu = () => {
               <Typography textAlign="center">Dashboard</Typography>
             </Link>
           </MenuItem>
-          <MenuItem onClick={signOut}>
+          <MenuItem onClick={handleLogout}>
             <Typography textAlign="center">Logout</Typography>
           </MenuItem>
         </Menu>
       </Box>
     );
   } else {
-    return <></>;
+    return null;
   }
 };
 

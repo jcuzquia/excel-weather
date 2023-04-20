@@ -1,4 +1,12 @@
-import { DocumentData, FirestoreDataConverter, QueryDocumentSnapshot, collection, doc } from "firebase/firestore";
+import {
+  DocumentData,
+  FirestoreDataConverter,
+  QueryDocumentSnapshot,
+  SnapshotOptions,
+  WithFieldValue,
+  collection,
+  doc,
+} from "firebase/firestore";
 import { IUser } from "../interfaces/IUser";
 import { dbFirestore } from "./config";
 
@@ -27,15 +35,18 @@ export type UpdateData<T extends object> = Partial<{
 }>;
 
 export const converter = <T>(): FirestoreDataConverter<T> => ({
-  toFirestore: (data: T): DocumentData => {
-    return data as unknown as DocumentData;
+  toFirestore: (data: WithFieldValue<T>): DocumentData => {
+    return data as DocumentData;
   },
-  fromFirestore: (snapshot: QueryDocumentSnapshot) => snapshot.data() as T,
+  fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): T => {
+    const data = snapshot.data(options);
+    return data as T;
+  },
 });
 
 const db = {
   users: collection(dbFirestore, "users").withConverter(converter<IUser>()),
-  user: (userId: string) => doc(dbFirestore, `users/${userId}`).withConverter(converter<IUser>()),
+  user: (userId: string) => doc(dbFirestore, "users", userId).withConverter(converter<IUser>()),
 };
 export { db };
 export default db;
