@@ -5,28 +5,30 @@ import Link from "../ui/Link/Link";
 
 const NRELMenu: React.FC = () => {
   return (
-    <Box display={"flex"} pt={2} flexDirection={"column"}>
-      <Typography variant="h5" textAlign={"center"}>
-        What would you like to do?
-      </Typography>
-      <Divider />
-      <Box display={"flex"} flexDirection={"column"} width={"100%"} mt={2}>
-        <Paper sx={{ p: 1 }}>
-          <Box display={"flex"} flexGrow={1} alignItems={"center"} justifyContent={"center"} gap={2}>
-            <Box>
-              <Avatar>
-                <ThermostatOutlinedIcon />
-              </Avatar>
+    <Paper sx={{ mt: 2 }}>
+      <Box display={"flex"} pt={2} flexDirection={"column"}>
+        <Typography variant="h5" textAlign={"center"}>
+          What would you like to do?
+        </Typography>
+        <Divider />
+        <Box display={"flex"} flexDirection={"column"} width={"100%"} mt={2}>
+          <Paper sx={{ p: 1 }}>
+            <Box display={"flex"} flexGrow={1} alignItems={"center"} justifyContent={"center"} gap={2}>
+              <Box>
+                <Avatar>
+                  <ThermostatOutlinedIcon />
+                </Avatar>
+              </Box>
+              <Box flexGrow={1}>
+                <Link href="/nrel-weather">
+                  <Typography variant="body1">Get Available Weather Data</Typography>
+                </Link>
+              </Box>
             </Box>
-            <Box flexGrow={1}>
-              <Link href="/nrel-weather">
-                <Typography variant="body1">Get Available Weather Data</Typography>
-              </Link>
-            </Box>
-          </Box>
-        </Paper>
+          </Paper>
+        </Box>
       </Box>
-    </Box>
+    </Paper>
   );
 };
 

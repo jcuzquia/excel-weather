@@ -66,3 +66,30 @@ const g = getGlobal() as any;
 
 // The add-in command functions need to be available in global scope
 g.action = action;
+
+export function writeDataToOfficeDocument(result: Object): Promise<any> {
+  return Excel.run(function (context) {
+    const sheet = context.workbook.worksheets.getActiveWorksheet();
+    let data = [];
+    let userProfileInfo: string[] = [];
+    userProfileInfo.push(result["displayName"]);
+    userProfileInfo.push(result["jobTitle"]);
+    userProfileInfo.push(result["mail"]);
+    userProfileInfo.push(result["mobilePhone"]);
+    userProfileInfo.push(result["officeLocation"]);
+
+    for (let i = 0; i < userProfileInfo.length; i++) {
+      if (userProfileInfo[i] !== null) {
+        let innerArray = [];
+        innerArray.push(userProfileInfo[i]);
+        data.push(innerArray);
+      }
+    }
+    const rangeAddress = `B5:B${5 + (data.length - 1)}`;
+    const range = sheet.getRange(rangeAddress);
+    range.values = data;
+    range.format.autofitColumns();
+
+    return context.sync();
+  });
+}

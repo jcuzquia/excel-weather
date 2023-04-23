@@ -6,4 +6,5 @@ export interface IUser {
   nrelAPIKey?: string;
   validNRELAPIKey?: boolean;
   ref?: DocumentReference<DocumentData>;
+  nrelEmail?: string;
 }

@@ -4,6 +4,7 @@ import Dashboard from "../pages/Dashboard";
 import LoginPage from "../pages/LoginPage";
 import Main from "../pages/Main";
 import NRELWeatherPage from "../pages/NRELWeatherPage";
+import NRELWeatherQueryPage from "../pages/NRELWeatherQueryPage";
 import Signup from "../pages/Signup";
 import Progress from "./Progress";
 import PrivateRoute from "./Protection/PrivateRoute";
@@ -27,10 +28,13 @@ export const App: React.FC<AppProps> = ({ title, isOfficeInitialized }) => {
           <Route exact path="/signup" component={Signup} />
           <Route exact path="/login" component={LoginPage} />
           <PrivateRoute exact path="/dashboard">
-            {<Dashboard />}
+            <Dashboard />
           </PrivateRoute>
           <PrivateRoute exact path="/nrel-weather">
-            {<NRELWeatherPage />}
+            <NRELWeatherPage />
+          </PrivateRoute>
+          <PrivateRoute exact path="/nrel-weather/query">
+            <NRELWeatherQueryPage />
           </PrivateRoute>
         </Layout>
       </Switch>

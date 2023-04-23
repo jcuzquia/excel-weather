@@ -10,6 +10,7 @@ const NRELWeatherPage: React.FC = () => {
       <Box width={"100%"} display={"flex"} flexDirection={"column"} m={2}>
         <Box m={2}>
           <Typography variant="h5">Start with a location:</Typography>
+
           <GoogleMapsTextField />
         </Box>
       </Box>

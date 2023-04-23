@@ -1,5 +1,6 @@
 import axios from "axios";
 
-const excelWeatherApi = axios.create({ baseURL: "https://developer.nrel.gov/api/" });
-
-export default excelWeatherApi;
+export const excelWeatherApi = axios.create({ baseURL: "https://developer.nrel.gov/api/" });
+export const excelWeatherQueryApi = axios.create({
+  baseURL: "https://developer.nrel.gov/api/solar/",
+});

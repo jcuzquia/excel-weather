@@ -1,17 +1,21 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import React from "react";
 import Header from "../components/Header";
 import theme from "../styles/theme";
 import { selectUser } from "../../redux/userSlice";
 import { useSelector } from "react-redux";
+import { getUserData } from "../../helpers/sso-helper";
+import { writeDataToOfficeDocument } from "../../commands/commands";
 
 const Main: React.FC = () => {
   const user = useSelector(selectUser);
-  console.log("User in Main is: ", user);
+  const handleClick = async () => {
+    await getUserData(writeDataToOfficeDocument);
+  };
   return (
     <Box>
       <Header />
-      {user && <Typography color={theme.palette.error.dark}>{user.email}</Typography>}
+      <Button onClick={handleClick}>Get User Data</Button>
     </Box>
   );
 };

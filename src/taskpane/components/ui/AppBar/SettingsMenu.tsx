@@ -59,6 +59,11 @@ const SettingsMenu = () => {
               <Typography textAlign="center">Dashboard</Typography>
             </Link>
           </MenuItem>
+          <MenuItem onClick={handleCloseUserMenu}>
+            <Link href="/nrel-weather">
+              <Typography textAlign="center">Get Weather</Typography>
+            </Link>
+          </MenuItem>
           <MenuItem onClick={handleLogout}>
             <Typography textAlign="center">Logout</Typography>
           </MenuItem>
