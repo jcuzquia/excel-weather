@@ -1,16 +1,21 @@
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { Box, Divider, Typography } from "@mui/material";
+import { Box, CircularProgress, Divider, Typography } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
+import { updateProfile } from "firebase/auth";
+import { setDoc } from "firebase/firestore";
 import React from "react";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useSignup } from "../../../hooks/useSignup";
+import { useHistory } from "react-router-dom";
+import { auth } from "../../../firebase/config";
+import db from "../../../firebase/db";
+import { IUser } from "../../../interfaces/IUser";
 import { isValidEmail } from "../../../utils/validations";
 import theme from "../../styles/theme";
 import Link from "../ui/Link/Link";
-import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../../../redux/userSlice";
 
@@ -28,16 +33,22 @@ const SignupForm = () => {
     formState: { errors },
   } = useForm<FormData>();
 
-  const { signupWithEmailAndPassword, errorMessage } = useSignup();
+  const [createUserWithEmailAndPassword, , authLoading, authError] = useCreateUserWithEmailAndPassword(auth);
   const history = useHistory();
   const dispatch = useDispatch();
 
   const onSignupUser: SubmitHandler<FormData> = async (data: FormData) => {
-    const user = await signupWithEmailAndPassword(data.email, data.password);
-    dispatch(login({ email: user.email, id: user.uid }));
+    try {
+      const res = await createUserWithEmailAndPassword(data.email, data.password);
+      await updateProfile(res.user, { displayName: data.username });
+      const newUser: IUser = { email: res.user.email, validNRELAPIKey: false, ref: db.user(res.user.uid) };
+      await setDoc<IUser>(db.user(res.user.uid), newUser);
 
-    if (user) {
-      history.push("/");
+      dispatch(login(newUser));
+      history.push("/dashboard");
+    } catch (error) {
+      // eslint-disable-next-line no-undef
+      console.error("Error on Signup user");
     }
   };
   return (
@@ -113,9 +124,13 @@ const SignupForm = () => {
             />
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="body1" color={theme.palette.error.light}>
-              {errorMessage}
-            </Typography>
+            {authLoading ? (
+              <CircularProgress />
+            ) : (
+              <Typography variant="body1" color={theme.palette.error.light}>
+                {authError}
+              </Typography>
+            )}
           </Grid>
         </Grid>
         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>

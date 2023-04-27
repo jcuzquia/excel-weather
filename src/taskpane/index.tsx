@@ -1,15 +1,14 @@
-import App from "./components/App";
-import { AppContainer } from "react-hot-loader";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import theme from "./styles/theme";
+import { AppContainer } from "react-hot-loader";
 import { Provider } from "react-redux";
 import { createFirestoreInstance } from "redux-firestore";
 import store from "../redux/store";
-import { ReactReduxFirebaseProvider, ReactReduxFirebaseProviderProps } from "react-redux-firebase";
-import { firebaseApp } from "../firebase/config";
-
+import App from "./components/App";
+import theme from "./styles/theme";
+// eslint-disable-next-line no-redeclare
 /* global document, Office, module, require */
 
 let isOfficeInitialized = false;
@@ -30,16 +29,17 @@ const rrfProps: ReactReduxFirebaseProviderProps = {
 };
 
 const render = (Component) => {
+  const queryClient = new QueryClient();
   ReactDOM.render(
     <Provider store={store}>
-      <ReactReduxFirebaseProvider {...rrfProps}>
+      <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <AppContainer>
             <Component title={title} isOfficeInitialized={isOfficeInitialized} />
           </AppContainer>
         </ThemeProvider>
-      </ReactReduxFirebaseProvider>
+      </QueryClientProvider>
     </Provider>,
     document.getElementById("container")
   );

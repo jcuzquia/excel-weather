@@ -1,47 +1,41 @@
 import * as React from "react";
-import Progress from "./Progress";
-import { HashRouter as Router, Route, Switch } from "react-router-dom";
-import Main from "../pages/Main";
+import { useEffect } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { Route, HashRouter as Router, Switch } from "react-router-dom";
+import { getUserById } from "../../firebase/authUser";
+import { auth } from "../../firebase/config";
+import { useAppDispatch } from "../../redux/store";
+import { login } from "../../redux/userSlice";
 import Dashboard from "../pages/Dashboard";
+import LoginPage from "../pages/LoginPage";
+import Main from "../pages/Main";
+import NRELWeatherPage from "../pages/NRELWeatherPage";
+import NRELWeatherQueryPage from "../pages/NRELWeatherQueryPage";
 import Signup from "../pages/Signup";
-import layout from "./ui/Layout/Layout";
+import Progress from "./Progress";
+import PrivateRoute from "./Protection/PrivateRoute";
 import Layout from "./ui/Layout/Layout";
-import Login from "../pages/Login";
-
-/* global console, Excel, require  */
 
 export interface AppProps {
   title: string;
   isOfficeInitialized: boolean;
+  authStatus?: string;
 }
 
 export const App: React.FC<AppProps> = ({ title, isOfficeInitialized }) => {
-  const [authenticated, setAuthenticated] = React.useState(false);
-  const click = async () => {
-    try {
-      await Excel.run(async (context) => {
-        /**
-         * Insert your Excel code here
-         */
-        const range = context.workbook.getSelectedRange();
-
-        // Read the range address
-        range.load("address");
-
-        // Update the fill color
-        range.format.fill.color = "yellow";
-
-        await context.sync();
-        console.log(`The range address was ${range.address}.`);
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const [user, loading] = useAuthState(auth);
+  const dispatch = useAppDispatch();
 
   if (!isOfficeInitialized) {
     return <Progress title={title} message="Please sideload your addin to see app body." />;
   }
+
+  useEffect(() => {
+    console.log("Calling Use Effect");
+    if (user) {
+      getUserById(user.uid).then(({ user }) => dispatch(login(user)));
+    }
+  }, [user, loading]);
 
   return (
     <Router basename="/">
@@ -49,7 +43,16 @@ export const App: React.FC<AppProps> = ({ title, isOfficeInitialized }) => {
         <Layout>
           <Route exact path="/" component={Main} />
           <Route exact path="/signup" component={Signup} />
-          <Route exact path="/login" component={Login} />
+          <Route exact path="/login" component={LoginPage} />
+          <PrivateRoute exact path="/dashboard">
+            <Dashboard />
+          </PrivateRoute>
+          <PrivateRoute exact path="/nrel-weather">
+            <NRELWeatherPage />
+          </PrivateRoute>
+          <PrivateRoute exact path="/nrel-weather/query">
+            <NRELWeatherQueryPage />
+          </PrivateRoute>
         </Layout>
       </Switch>
     </Router>

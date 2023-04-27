@@ -1,32 +1,54 @@
 import React from "react";
 
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { isValidEmail } from "../../utils/validations";
+import { getDoc } from "firebase/firestore";
+import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useHistory } from "react-router-dom";
+import { auth } from "../../firebase/config";
+import db from "../../firebase/db";
+import { useAppDispatch } from "../../redux/store";
+import { login } from "../../redux/userSlice";
+import { isValidEmail } from "../../utils/validations";
+import theme from "../styles/theme";
 type FormData = {
   email: string;
   password: string;
 };
-const Login = () => {
+const LoginPage = () => {
   const {
     register,
     handleSubmit,
     // watch,
     formState: { errors },
   } = useForm<FormData>();
+  const dispatch = useAppDispatch();
+  const history = useHistory();
+  const [signInWithEmailAndPassword, , loading, error] = useSignInWithEmailAndPassword(auth);
 
-  const onLoginUser: SubmitHandler<FormData> = (data: FormData) => {
-    console.log(data);
-    // TODO: Login
+  const onLoginUser: SubmitHandler<FormData> = async (data: FormData) => {
+    try {
+      const res = await signInWithEmailAndPassword(data.email, data.password);
+      if (res.user) {
+        //login successful
+        const user = (await getDoc(db.user(res.user.uid))).data();
+        dispatch(login(user));
+      }
+
+      history.push("/dashboard");
+    } catch (err) {
+      console.error(err.message);
+    }
   };
   return (
     <Box
@@ -85,8 +107,14 @@ const Login = () => {
         </Grid>
         <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-          Sign In
+          {loading ? <CircularProgress /> : "Sign In"}
         </Button>
+        {error && (
+          <Typography variant="body1" color={theme.palette.error.light}>
+            {error.message}
+          </Typography>
+        )}
+
         <Grid container>
           <Grid item xs>
             <Link href="#" variant="body2">
@@ -104,4 +132,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;
