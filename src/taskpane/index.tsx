@@ -4,7 +4,6 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
 import { Provider } from "react-redux";
-import { createFirestoreInstance } from "redux-firestore";
 import store from "../redux/store";
 import App from "./components/App";
 import theme from "./styles/theme";
@@ -14,19 +13,6 @@ import theme from "./styles/theme";
 let isOfficeInitialized = false;
 
 const title = "Contoso Task Pane Add-in";
-
-const rrfConfig = {
-  userProfile: "users",
-  useFirestoreForProfile: true,
-};
-
-const rrfProps: ReactReduxFirebaseProviderProps = {
-  initializeAuth: true,
-  firebase: firebaseApp,
-  config: rrfConfig,
-  dispatch: store.dispatch,
-  createFirestoreInstance,
-};
 
 const render = (Component) => {
   const queryClient = new QueryClient();
