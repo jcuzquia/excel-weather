@@ -10,7 +10,6 @@ interface Props {
 const YearsAvailableContainer: React.FC<Props> = ({ yearsAvailable }) => {
   const [value, setValue] = useState("");
   const handleRadioChange = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
     setValue(e.target.value);
   };
   return (

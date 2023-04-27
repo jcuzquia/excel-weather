@@ -1,6 +1,6 @@
+import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel } from "@mui/material";
 import React from "react";
 import { QueryAttribute } from "../../../interfaces/NRELQuery";
-import { Box, Typography, Checkbox, FormControlLabel, FormControl, FormLabel, FormGroup } from "@mui/material";
 
 interface Props {
   parameters: Array<QueryAttribute>;

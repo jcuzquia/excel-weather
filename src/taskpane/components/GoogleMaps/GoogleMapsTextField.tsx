@@ -65,6 +65,8 @@ const GoogleMapsTextField = () => {
               {...params}
               label="Search..."
               value={value}
+              size="small"
+              margin="dense"
               inputProps={{
                 ...params.inputProps,
                 autoComplete: "new-password", // disable autocomplete and autofill

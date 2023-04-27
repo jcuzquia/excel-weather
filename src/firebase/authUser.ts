@@ -1,6 +1,9 @@
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "./config";
 import { FirebaseError } from "firebase/app";
+import { getDoc } from "firebase/firestore";
+import db from "./db";
+import { IUser } from "../interfaces/IUser";
 /**
  * Creates a new user in Firebase Authentication with the provided email, password, and display name.
  *
@@ -22,4 +25,17 @@ export const createUser = async (username: string, email: string, password: stri
       throw error; //this is for non firebase errors
     }
   }
+};
+
+export const getUserById = async (id: string) => {
+  let user: IUser;
+  let err: Error;
+  try {
+    user = (await getDoc(db.user(id))).data();
+    err = null;
+  } catch (error) {
+    user = null;
+    err = error;
+  }
+  return { user, err };
 };

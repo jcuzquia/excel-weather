@@ -1,29 +1,49 @@
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Accordion, AccordionSummary, Box, Typography } from "@mui/material";
-import React, { FC } from "react";
+import { Box, Grid } from "@mui/material";
+import React, { FC, useState } from "react";
 import { NRELResponseQuery } from "../../../interfaces/NRELQuery";
-import NRELQueryDetails from "./NRELQueryDetails";
+import IntervalSelector from "./IntervalSelector";
+import SolarResourceSelector from "./SolarResourceSelector";
+import YearsAvailableSelector from "./YearsAvailableSelector";
 interface Props {
   response: NRELResponseQuery;
 }
 
 const NRELQuerySuccess: FC<Props> = ({ response }) => {
-  const [expanded, setExpanded] = React.useState<string | false>(false);
-  console.log(response);
+  const [solarResourceValue, setSolarResourceValue] = useState("");
+  const [year, setYear] = useState<string | number>("");
+  const [interval, setInterval] = useState<string | number>("");
 
-  const handleChange = (panel: string) => (_event: React.SyntheticEvent, isExpanded: boolean) => {
-    setExpanded(isExpanded ? panel : false);
-  };
+  let availableYears: Array<string | number> | null;
+  let intervals: Array<string | number> | null;
+  if (response.outputs && solarResourceValue) {
+    const foundOuput = response.outputs.find((output) => output.name === solarResourceValue);
+    if (foundOuput) {
+      availableYears = foundOuput.availableYears;
+      intervals = foundOuput.availableIntervals;
+    }
+  } else {
+    availableYears = null;
+    intervals = null;
+  }
+  console.log(availableYears);
   return (
-    <Box>
-      {response.outputs.map((output) => (
-        <Accordion expanded={expanded === output.name} onChange={handleChange(output.name)} key={output.name}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1bh-content" id="panel1bh-header">
-            <Typography sx={{ flexShrink: 0 }}>{output.displayName}</Typography>
-          </AccordionSummary>
-          <NRELQueryDetails availableYears={output.availableYears} intervals={output.availableIntervals} />
-        </Accordion>
-      ))}
+    <Box display={"flex"} flexDirection={"column"} sx={{ m: 2 }} gap={2}>
+      <SolarResourceSelector
+        setSolarResourceValue={setSolarResourceValue}
+        solarResourceValue={solarResourceValue}
+        solarResources={response.outputs}
+      />
+      <Box>
+        <Grid container rowGap={2}>
+          <Grid item xs={3}>
+            <IntervalSelector setInterval={setInterval} intervalValue={interval} intervals={intervals} />
+          </Grid>
+          <Grid item xs={3}>
+            <YearsAvailableSelector setYear={setYear} yearsValue={year} years={availableYears} />
+          </Grid>
+          <Grid item xs={6}></Grid>
+        </Grid>
+      </Box>
     </Box>
   );
 };

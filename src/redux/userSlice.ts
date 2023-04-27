@@ -9,7 +9,6 @@ type ActionType = {
   payload: IUser;
 };
 
-// TODO change the initial state in the slice when in production
 const initialState: AuthState = {
   user: null,
 };

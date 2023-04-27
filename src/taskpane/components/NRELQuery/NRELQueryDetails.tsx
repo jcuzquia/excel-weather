@@ -11,7 +11,6 @@ interface Props {
 }
 
 const NRELQueryDetails: FC<Props> = ({ intervals, availableYears }) => {
-  console.log(availableYears);
   return (
     <AccordionDetails>
       <Paper>

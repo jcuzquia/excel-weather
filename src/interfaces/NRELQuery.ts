@@ -18,7 +18,7 @@ export interface NRELResponseQuery {
   status?: number;
 }
 
-interface NRELQueryOutput {
+export interface NRELQueryOutput {
   apiDocs?: string;
   apiUrl?: string;
   availableIntervals?: Array<number>;

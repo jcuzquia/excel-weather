@@ -3,9 +3,8 @@
  * See LICENSE in the project root for license information.
  */
 
-/* global global, Office, self, window */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-/* global console, Excel, require  */
+/* global Office */
+/* global Excel  */
 
 Office.onReady(() => {
   // If needed, Office.js is ready to be called
