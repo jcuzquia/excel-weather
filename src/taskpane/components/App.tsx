@@ -10,7 +10,6 @@ import Dashboard from "../pages/Dashboard";
 import LoginPage from "../pages/LoginPage";
 import Main from "../pages/Main";
 import NRELWeatherPage from "../pages/NRELWeatherPage";
-import NRELWeatherQueryPage from "../pages/NRELWeatherQueryPage";
 import Signup from "../pages/Signup";
 import Progress from "./Progress";
 import PrivateRoute from "./Protection/PrivateRoute";
@@ -50,9 +49,9 @@ export const App: React.FC<AppProps> = ({ title, isOfficeInitialized }) => {
           <PrivateRoute exact path="/nrel-weather">
             <NRELWeatherPage />
           </PrivateRoute>
-          <PrivateRoute exact path="/nrel-weather/query">
+          {/* <PrivateRoute exact path="/nrel-weather/query">
             <NRELWeatherQueryPage />
-          </PrivateRoute>
+          </PrivateRoute> */}
         </Layout>
       </Switch>
     </Router>

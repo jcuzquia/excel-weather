@@ -15,7 +15,7 @@ const Map = () => {
   }, [coordinates]);
 
   return (
-    <Box width={"100%"} height={"50vh"} sx={{ backgroundColor: "blue" }}>
+    <Box width={"100%"} height={"30vh"}>
       <GoogleMapReact
         bootstrapURLKeys={{ key: "AIzaSyBveugtwt78z1xoVcn2sZtT89b7IDpBJww" }}
         defaultCenter={coordinates}

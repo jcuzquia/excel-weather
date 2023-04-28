@@ -1,4 +1,4 @@
-export interface SelectorOptions {
-  value: string;
-  label?: string;
+export interface SelectorOption {
+  value: string | number;
+  itemLabel: string | number;
 }
