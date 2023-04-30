@@ -5,8 +5,7 @@ interface Props {
   lng: number;
 }
 
-const Marker: FC<Props> = ({ lat, lng }) => {
-  console.log(lat, lng);
+const Marker: FC<Props> = () => {
   return <LocationSearchingIcon color="error" />;
 };
 

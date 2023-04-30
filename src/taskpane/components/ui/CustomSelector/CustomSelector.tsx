@@ -10,23 +10,19 @@ interface Props {
   isError?: boolean;
   errorMessage?: string;
   hasEmptyInitialValue: boolean;
-  setValue: (value: string | number) => void;
+  handleChange: (e: SelectChangeEvent) => void;
 }
 
 const CustomSelector: FC<Props> = ({
   fullWidth,
   items,
-  setValue,
   isError,
   label,
   value,
   hasEmptyInitialValue,
   errorMessage,
+  handleChange,
 }) => {
-  const handleChange = (e: SelectChangeEvent) => {
-    setValue(e.target.value);
-  };
-
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} error={isError} fullWidth={fullWidth} size="small" margin="dense">
       <InputLabel id="select-label">{label}</InputLabel>

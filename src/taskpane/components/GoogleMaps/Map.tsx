@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import GoogleMapReact from "google-map-react";
 import React from "react";
-import { selectMapState } from "../../../redux/coordinatesSlice";
+import { initialMapState, selectMapState } from "../../../redux/coordinatesSlice";
 import { useTypedSelector } from "../../../redux/store";
 import Marker from "./Marker";
 import { useEffect, useState } from "react";
@@ -24,7 +24,10 @@ const Map = () => {
         yesIWantToUseGoogleMapApiInternals
         zoom={15}
       >
-        <Marker lat={coordinates.lat} lng={coordinates.lng} />
+        <Marker
+          lat={coordinates ? coordinates.lat : initialMapState.coordinates.lat}
+          lng={coordinates ? coordinates.lng : initialMapState.coordinates.lng}
+        />
       </GoogleMapReact>
     </Box>
   );

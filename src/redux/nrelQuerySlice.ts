@@ -21,9 +21,13 @@ export const nrelQuerySlice = createSlice({
       state.value = null;
       return state;
     },
+    clearResponse: (state: QueryState) => {
+      state.value = null;
+      return state;
+    },
   },
 });
-export const { responseSuccess, responseFailed } = nrelQuerySlice.actions;
+export const { responseSuccess, responseFailed, clearResponse } = nrelQuerySlice.actions;
 export const selectNRELQueryState = (state: RootState) => state.nrelQuery.value;
 
 export default nrelQuerySlice.reducer;

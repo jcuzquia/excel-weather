@@ -7,8 +7,7 @@ interface MapState {
   zoom: number;
 }
 
-// TODO: Change to another default value
-const initialState: MapState = {
+export const initialMapState: MapState = {
   address: "",
   coordinates: { lat: 41.8283229, lng: -86.36334289999999 },
   zoom: 15,
@@ -16,7 +15,7 @@ const initialState: MapState = {
 
 export const mapSlice = createSlice({
   name: "map",
-  initialState,
+  initialState: initialMapState,
   reducers: {
     setLocation: (state: MapState, action: PayloadAction<MapState>) => {
       state.address = action.payload.address;
@@ -36,10 +35,14 @@ export const mapSlice = createSlice({
       state.zoom = action.payload;
       return state;
     },
-    clearCoordinates: (state) => void (state.coordinates = null),
+    clearCoordinates: (state: MapState) => {
+      state.coordinates = null;
+      state.address = "";
+      state.zoom = 15;
+    },
   },
 });
-export const { setCoordinates, setLocation, setZoom, setAddress } = mapSlice.actions;
+export const { setCoordinates, setLocation, setZoom, setAddress, clearCoordinates } = mapSlice.actions;
 export const selectMapState = (state: RootState) => state.coordinates;
 
 export default mapSlice.reducer;
