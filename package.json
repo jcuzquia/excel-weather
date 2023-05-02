@@ -55,6 +55,7 @@
   "devDependencies": {
     "@babel/core": "^7.13.10",
     "@babel/preset-typescript": "^7.13.0",
+    "@total-typescript/ts-reset": "^0.4.2",
     "@types/bcryptjs": "^2.4.2",
     "@types/google.maps": "^3.52.6",
     "@types/office-js": "^1.0.256",

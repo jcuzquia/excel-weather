@@ -38,27 +38,41 @@ interface QueryLinkObject {
 }
 
 export interface QueryAttribute {
-  parameter: string;
+  attribute: string;
   name: string;
+  selected: boolean;
 }
 
-export const fullDiscAttributes: QueryAttribute[] = [
-  { parameter: "air_temperature", name: "Temperature" },
-  { parameter: "clearsky_dhi", name: "Clear-Sky Direct Horizontal Irradiance" },
-  { parameter: "clearsky_dni", name: "Clear-Sky Direct Normal Irradiance" },
-  { parameter: "clearsky_ghi", name: "Clear-Sky Global Horizontal Irradiance" },
-  { parameter: "cloud_type", name: "Cloud Type" },
-  { parameter: "dew_point", name: "Dew Point Temperature" },
-  { parameter: "fill_flag", name: "Fill Flag" },
-  { parameter: "ghi", name: "Global Horizonal Irradiance" },
-  { parameter: "dhi", name: "Direct Horizontal Irradiance" },
-  { parameter: "dni", name: "Direct Normal Irradiance" },
-  { parameter: "ozone", name: "Reduced Ozone Vertical Pathlength" },
-  { parameter: "relative_humidity", name: "Relative Humidity" },
-  { parameter: "solar_zenith_angle", name: "Solar Zenith Angle" },
-  { parameter: "surface_albedo", name: "Surface Albedo" },
-  { parameter: "surface_pressure", name: "Pressure" },
-  { parameter: "total_precipitable_water", name: "Precipitable Water" },
-  { parameter: "wind_direction", name: "Wind Direction" },
-  { parameter: "wind_speed", name: "Wind Speed" },
+export const attributes: QueryAttribute[] = [
+  { attribute: "air_temperature", name: "Temperature", selected: false },
+  { attribute: "aod", name: "Aerosol Optical Depth", selected: false },
+  { attribute: "asymmetry", name: "Aerosol Asymmetry", selected: false },
+  { attribute: "cld_opd_dcomp", name: "Cloud Optical Depth", selected: false },
+  { attribute: "cld_reff_dcomp", name: "Cloud Effective Radius", selected: false },
+  { attribute: "alpha", name: "Angstrom Exponent", selected: false },
+  { attribute: "clearsky_dhi", name: "Clear-Sky Direct Horizontal Irradiance", selected: false },
+  { attribute: "clearsky_dni", name: "Clear-Sky Direct Normal Irradiance", selected: false },
+  { attribute: "clearsky_ghi", name: "Clear-Sky Global Horizontal Irradiance", selected: false },
+  { attribute: "cloud_type", name: "Cloud Type", selected: false },
+  { attribute: "dew_point", name: "Dew Point Temperature", selected: false },
+  { attribute: "fill_flag", name: "Fill Flag", selected: false },
+  { attribute: "ghi", name: "Global Horizonal Irradiance", selected: false },
+  { attribute: "dhi", name: "Direct Horizontal Irradiance", selected: false },
+  { attribute: "dni", name: "Direct Normal Irradiance", selected: false },
+  { attribute: "ozone", name: "Reduced Ozone Vertical Pathlength", selected: false },
+  { attribute: "relative_humidity", name: "Relative Humidity", selected: false },
+  { attribute: "solar_zenith_angle", name: "Solar Zenith Angle", selected: false },
+  { attribute: "surface_albedo", name: "Surface Albedo", selected: false },
+  { attribute: "ssa", name: "Single Scattering Albedo", selected: false },
+  { attribute: "surface_pressure", name: "Pressure", selected: false },
+  { attribute: "total_precipitable_water", name: "Precipitable Water", selected: false },
+  { attribute: "wind_direction", name: "Wind Direction", selected: false },
+  { attribute: "wind_speed", name: "Wind Speed", selected: false },
+  { attribute: "ghuv-280-400", name: "Solar (UV) wavelengths 280-400 nanometers", selected: false },
+  { attribute: "ghuv-295-385", name: "Solar (UV) wavelengths 295-385 nanometers", selected: false },
 ];
+
+export const getAttribute = (attr: string) => {
+  const foundAttribute = attributes.find((attribute) => attribute.attribute === attr);
+  return foundAttribute;
+};

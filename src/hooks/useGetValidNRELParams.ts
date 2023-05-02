@@ -1,8 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { excelWeatherQueryApi } from "../api/excel-weatherApi";
-import { NRELResponseQuery } from "../interfaces/NRELQuery";
-import { useEffect } from "react";
-import axios from "axios";
+import { NRELResponseQuery, getAttribute } from "../interfaces/NRELQuery";
 export const useGetValidNRELParams = (url: string) => {
   const {
     error,
@@ -12,18 +9,14 @@ export const useGetValidNRELParams = (url: string) => {
   } = useQuery({
     queryKey: ["queryParamenters"],
     queryFn: async () => {
-      console.log("GETTING DATA");
-      const response = await fetch(`${url}&attributes=not_a_valid_attribute`);
+      const response = await fetch(`${url}&attributes=not_a_valid_attribute`); //using fetch to get data even if it is error
       const data = await response.json();
-      console.log("==========");
-      console.log(data);
       const nrelQueryData = data as NRELResponseQuery;
-      console.log(nrelQueryData.errors[0]);
       const validAttributes = nrelQueryData.errors[0].split(",");
       const validValueRegex = /^[a-z_\-0-9]+$/i;
       const validValues = validAttributes.filter((value) => validValueRegex.test(value.trim()));
-      console.log(validValues);
-      return validValues;
+      const attributes = validValues.map((value) => getAttribute(value.trim()));
+      return attributes;
     },
     enabled: false,
   });

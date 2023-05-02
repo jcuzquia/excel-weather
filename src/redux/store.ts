@@ -3,12 +3,14 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import coordinatesSlice from "./coordinatesSlice";
 import nrelQuerySlice from "./nrelQuerySlice";
 import userSlice from "./userSlice";
+import nrelWeatherDataFormSlice from "./nrelWeatherDataFormSlice";
 
 const store = configureStore({
   reducer: {
     user: userSlice,
     coordinates: coordinatesSlice,
     nrelQuery: nrelQuerySlice,
+    nrelWeatherDataForm: nrelWeatherDataFormSlice,
   },
 });
 

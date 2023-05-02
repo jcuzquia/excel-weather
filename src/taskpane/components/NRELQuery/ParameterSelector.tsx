@@ -1,55 +1,58 @@
-import React, { FC, useState } from "react";
 import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  ListItemText,
   Box,
-  OutlinedInput,
   Checkbox,
   Chip,
-  SelectChangeEvent,
+  FormControl,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Select,
 } from "@mui/material";
-
-const names = [
-  "Oliver Hansen",
-  "Van Henry",
-  "April Tucker",
-  "Ralph Hubbard",
-  "Omar Alexander",
-  "Carlos Abbott",
-  "Miriam Wagner",
-  "Bradley Wilkerson",
-  "Virginia Andrews",
-  "Kelly Snyder",
-];
+import React, { ChangeEvent, FC, useState } from "react";
+import { QueryAttribute } from "../../../interfaces/NRELQuery";
+import { useAppDispatch } from "../../../redux/store";
+import { setSelectedAttributes } from "../../../redux/nrelWeatherDataFormSlice";
 
 interface Props {
   fullWidth?: boolean;
+  attributes: QueryAttribute[];
 }
 
-const ParameterSelector: FC<Props> = ({ fullWidth }) => {
-  const [personName, setPersonName] = useState<string[]>([]);
-  const handleChange = (event: SelectChangeEvent<typeof personName>) => {
+const ParameterSelector: FC<Props> = ({ fullWidth, attributes }) => {
+  const [attributeList, setAttributeList] = useState(attributes);
+  const [attributeStr, setAttributeStr] = useState<string[]>([]);
+  const dispatch = useAppDispatch();
+
+  const handleAttributeChange = (event: ChangeEvent<HTMLInputElement>) => {
     const {
       target: { value },
     } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
+    dispatch(setSelectedAttributes(typeof value === "string" ? value.split(",") : value));
+    setAttributeStr(typeof value === "string" ? value.split(",") : value);
+  };
+
+  const handleChangeAll = () => {
+    const allSelected = attributeList.every((attribute) => attribute.selected);
+    const updatedAttributeList = attributeList.map((attribute) => ({
+      ...attribute,
+      selected: !allSelected,
+    }));
+    setAttributeList(updatedAttributeList);
+    setAttributeStr(
+      updatedAttributeList.filter((attribute) => attribute.selected).map((attribute) => attribute.attribute)
     );
   };
+  console.log(attributeStr);
   return (
     <FormControl sx={{ m: 1 }} margin="dense" fullWidth={fullWidth}>
       <InputLabel id="demo-multiple-checkbox-label">Parameters</InputLabel>
       <Select
         size="small"
         labelId="demo-multiple-checkbox-label"
-        id="demo-multiple-checkbox"
         multiple
-        value={personName}
-        onChange={handleChange}
+        value={attributeStr}
+        onChange={handleAttributeChange}
         input={<OutlinedInput label="Tag" />}
         renderValue={(selected) => (
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
@@ -59,10 +62,18 @@ const ParameterSelector: FC<Props> = ({ fullWidth }) => {
           </Box>
         )}
       >
-        {names.map((name) => (
-          <MenuItem key={name} value={name}>
-            <Checkbox checked={personName.indexOf(name) > -1} />
-            <ListItemText primary={name} />
+        <MenuItem value={"select-all"}>
+          <Checkbox size="small" onChange={handleChangeAll} />
+          <ListItemText primary={"Select All"} />
+        </MenuItem>
+        {attributeList.map((attribute) => (
+          <MenuItem key={attribute.attribute} value={attribute.attribute}>
+            <Checkbox
+              size="small"
+              checked={attributeStr.indexOf(attribute.attribute) > -1}
+              value={attribute.attribute}
+            />
+            <ListItemText primary={attribute.name} />
           </MenuItem>
         ))}
       </Select>
