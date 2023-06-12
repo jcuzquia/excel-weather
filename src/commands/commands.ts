@@ -66,29 +66,21 @@ const g = getGlobal() as any;
 // The add-in command functions need to be available in global scope
 g.action = action;
 
-export function writeDataToOfficeDocument(result: Object): Promise<any> {
+export function writeWeatherDataToOfficeDocument(csvData: string): Promise<any> {
   return Excel.run(function (context) {
-    const sheet = context.workbook.worksheets.getActiveWorksheet();
-    let data = [];
-    let userProfileInfo: string[] = [];
-    userProfileInfo.push(result["displayName"]);
-    userProfileInfo.push(result["jobTitle"]);
-    userProfileInfo.push(result["mail"]);
-    userProfileInfo.push(result["mobilePhone"]);
-    userProfileInfo.push(result["officeLocation"]);
+    const wb = context.workbook;
+    const ws = wb.worksheets.add("WEATHER");
 
-    for (let i = 0; i < userProfileInfo.length; i++) {
-      if (userProfileInfo[i] !== null) {
-        let innerArray = [];
-        innerArray.push(userProfileInfo[i]);
-        data.push(innerArray);
+    const rows = csvData.split("\n");
+    for (let i = 0; i < rows.length; i++) {
+      const columns = rows[i].split(",");
+
+      // Populate each cell in the row
+      for (let j = 0; j < columns.length; j++) {
+        ws.getCell(i, j).values = [[columns[j]]];
       }
     }
-    const rangeAddress = `B5:B${5 + (data.length - 1)}`;
-    const range = sheet.getRange(rangeAddress);
-    range.values = data;
-    range.format.autofitColumns();
-
+    ws.activate();
     return context.sync();
   });
 }

@@ -12,11 +12,19 @@ export const useGetValidNRELParams = (url: string) => {
       const response = await fetch(`${url}&attributes=not_a_valid_attribute`); //using fetch to get data even if it is error
       const data = await response.json();
       const nrelQueryData = data as NRELResponseQuery;
-      const validAttributes = nrelQueryData.errors[0].split(",");
-      const validValueRegex = /^[a-z_\-0-9]+$/i;
-      const validValues = validAttributes.filter((value) => validValueRegex.test(value.trim()));
-      const attributes = validValues.map((value) => getAttribute(value.trim()));
-      return attributes;
+      const selectedError = nrelQueryData.errors.find(
+        (error) => error.indexOf("The optional 'attributes' parameter") !== -1
+      );
+
+      const validValueRegex = /Values may include (.+)/;
+      const attributesMatch = selectedError.match(validValueRegex);
+      if (attributesMatch && attributesMatch.length > 1) {
+        const attributesStr = attributesMatch[1].split(",").map((attribute) => attribute.trim());
+        console.log(attributesStr);
+        const attributes = attributesStr.map((value) => getAttribute(value.trim()));
+        return attributes;
+      }
+      return null;
     },
     enabled: false,
   });

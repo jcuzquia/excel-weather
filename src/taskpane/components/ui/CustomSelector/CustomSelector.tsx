@@ -33,11 +33,12 @@ const CustomSelector: FC<Props> = ({
           </MenuItem>
         )}
 
-        {items.map((item, i) => (
-          <MenuItem value={item.value} key={i}>
-            {item.itemLabel}
-          </MenuItem>
-        ))}
+        {items &&
+          items.map((item, i) => (
+            <MenuItem value={item.value} key={i}>
+              {item.itemLabel}
+            </MenuItem>
+          ))}
       </Select>
       {errorMessage && <FormHelperText>{errorMessage}</FormHelperText>}
     </FormControl>

@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { NRELResponseQuery } from "../interfaces/NRELQuery";
 import { RootState } from "./store";
-interface QueryState {
+export interface QueryState {
   value: NRELResponseQuery | null;
 }
 

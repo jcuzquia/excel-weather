@@ -4,10 +4,11 @@ import React from "react";
 import GoogleMapsTextField from "./GoogleMapsTextField";
 import { excelWeatherQueryApi } from "../../../api/excel-weatherApi";
 import { useAppDispatch, useTypedSelector } from "../../../redux/store";
-import { selectUser } from "../../../redux/userSlice";
+import { selectUser } from "../../../redux/authSlice";
 import { NRELResponseQuery } from "../../../interfaces/NRELQuery";
 import { selectMapState } from "../../../redux/coordinatesSlice";
-import { responseSuccess } from "../../../redux/nrelQuerySlice";
+import { clearResponse, responseSuccess } from "../../../redux/nrelQuerySlice";
+import { clearForm } from "../../../redux/nrelWeatherDataFormSlice";
 
 const GoogleMapsAutoCompleteForm = () => {
   const user = useTypedSelector(selectUser);
@@ -20,9 +21,12 @@ const GoogleMapsAutoCompleteForm = () => {
         `nsrdb_data_query.json?api_key=${user.nrelAPIKey}&lat=${coordinates?.lat}&lon=${coordinates?.lng}`
       );
       const nrelQueryData = data as NRELResponseQuery;
+      dispatch(clearForm());
+      dispatch(clearResponse());
+
       dispatch(responseSuccess(nrelQueryData));
 
-      return null;
+      return data;
     },
     enabled: false,
   });

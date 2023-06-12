@@ -19,10 +19,10 @@ const Map = () => {
       <GoogleMapReact
         bootstrapURLKeys={{ key: "AIzaSyBveugtwt78z1xoVcn2sZtT89b7IDpBJww" }}
         defaultCenter={coordinates}
-        defaultZoom={zoom}
+        defaultZoom={15}
         center={coordinatesState}
         yesIWantToUseGoogleMapApiInternals
-        zoom={15}
+        zoom={zoom}
       >
         <Marker
           lat={coordinates ? coordinates.lat : initialMapState.coordinates.lat}

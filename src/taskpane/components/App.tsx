@@ -1,11 +1,7 @@
 import * as React from "react";
-import { useEffect } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { Route, HashRouter as Router, Switch } from "react-router-dom";
-import { getUserById } from "../../firebase/authUser";
-import { auth } from "../../firebase/config";
-import { useAppDispatch } from "../../redux/store";
-import { login } from "../../redux/userSlice";
+import { fetchFirestoreUser, selectUser } from "../../redux/authSlice";
+import { useAppDispatch, useTypedSelector } from "../../redux/store";
 import Dashboard from "../pages/Dashboard";
 import LoginPage from "../pages/LoginPage";
 import Main from "../pages/Main";
@@ -14,6 +10,8 @@ import Signup from "../pages/Signup";
 import Progress from "./Progress";
 import PrivateRoute from "./Protection/PrivateRoute";
 import Layout from "./ui/Layout/Layout";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../firebase/config";
 
 export interface AppProps {
   title: string;
@@ -22,20 +20,16 @@ export interface AppProps {
 }
 
 export const App: React.FC<AppProps> = ({ title, isOfficeInitialized }) => {
-  const [user, loading] = useAuthState(auth);
+  const [user] = useAuthState(auth);
   const dispatch = useAppDispatch();
-
   if (!isOfficeInitialized) {
     return <Progress title={title} message="Please sideload your addin to see app body." />;
   }
-
-  useEffect(() => {
-    console.log("Calling Use Effect");
+  React.useEffect(() => {
     if (user) {
-      getUserById(user.uid).then(({ user }) => dispatch(login(user)));
+      dispatch(fetchFirestoreUser({ id: user.uid }));
     }
-  }, [user, loading]);
-
+  }, [user]);
   return (
     <Router basename="/">
       <Switch>
@@ -49,9 +43,6 @@ export const App: React.FC<AppProps> = ({ title, isOfficeInitialized }) => {
           <PrivateRoute exact path="/nrel-weather">
             <NRELWeatherPage />
           </PrivateRoute>
-          {/* <PrivateRoute exact path="/nrel-weather/query">
-            <NRELWeatherQueryPage />
-          </PrivateRoute> */}
         </Layout>
       </Switch>
     </Router>

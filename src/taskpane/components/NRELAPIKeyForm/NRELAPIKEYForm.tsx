@@ -1,29 +1,30 @@
 import { Box, Button, CircularProgress, Paper, TextField, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { updateDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import React, { FC } from "react";
 import { useForm } from "react-hook-form";
 import { excelWeatherApi } from "../../../api/excel-weatherApi";
-import db from "../../../firebase/db";
 import { IUser } from "../../../interfaces/IUser";
-import { useTypedSelector } from "../../../redux/store";
-import { selectUser } from "../../../redux/userSlice";
+import { selectUser, updateFirestoreUser } from "../../../redux/authSlice";
+import { useAppDispatch, useTypedSelector } from "../../../redux/store";
 import { isValidEmail } from "../../../utils/validations";
 import NRELMenu from "../NRELMenu/NRELMenu";
 import Link from "../ui/Link/Link";
+import { useEffect } from "react";
 
 type FormData = {
   email: string;
+  nrelKey: string;
 };
 
-const NRELAPIKEYForm = () => {
+const NRELAPIKEYForm: FC = () => {
+  const dispatch = useAppDispatch();
   const user = useTypedSelector(selectUser);
-  const [nrelEmail, setNrelEmail] = useState<string | null>(user.nrelEmail);
-  const [key, setKey] = useState<string>(user.nrelAPIKey);
-  const [keyIsValid, setKeyIsValid] = useState(false);
   const {
     register,
     handleSubmit,
+    setValue,
+    getValues,
+    reset,
     // watch,
     formState: { errors },
   } = useForm<FormData>();
@@ -31,18 +32,22 @@ const NRELAPIKEYForm = () => {
   const { error, isError, isFetching, refetch, isSuccess } = useQuery({
     queryKey: ["testData"],
     queryFn: async () => {
+      const key = getValues("nrelKey");
+      console.log("REFETCHING: ", key);
       if (key) {
         const { data, status } = await excelWeatherApi.get(`alt-fuel-stations/v1.json?limit=1&api_key=${key}`);
         let validAPI: boolean;
         if (status === 200) {
+          console.log("IT IS VALID");
           validAPI = true;
         } else {
           validAPI = false;
         }
-        const updateUser: IUser = { ...user, validNRELAPIKey: validAPI };
-        await updateDoc(db.user(user.id), updateUser);
-        setKey(key);
-        setKeyIsValid(validAPI);
+        const updateUser: IUser = { ...user, validNRELAPIKey: validAPI, nrelAPIKey: key };
+
+        console.log("THIS IS THE UPDATE USER!!", updateUser);
+        dispatch(updateFirestoreUser({ user: updateUser }));
+
         return data;
       } else {
         return null;
@@ -55,10 +60,8 @@ const NRELAPIKEYForm = () => {
     window.open("https://developer.nrel.gov/signup/");
   };
 
-  const saveAPIKey = async (data: FormData) => {
-    refetch();
-    const updateUser: IUser = { ...user, nrelEmail: data.email };
-    await updateDoc(db.user(user.id), updateUser);
+  const saveAPIKey = async () => {
+    await refetch();
   };
   let errorMessage: string | null = null;
   if (!error) {
@@ -70,14 +73,12 @@ const NRELAPIKEYForm = () => {
   }
 
   useEffect(() => {
-    refetch();
-    if (user.nrelEmail) {
-      setNrelEmail(user.nrelEmail);
-    } else {
-      setNrelEmail("");
-    }
+    reset({ email: user.email, nrelKey: user.nrelAPIKey });
   }, []);
-  console.log("err before render:", isError, "Is success:", isSuccess);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <Box>
@@ -92,13 +93,10 @@ const NRELAPIKEYForm = () => {
             margin="dense"
             required
             fullWidth
-            id="email"
+            id="nrelEmail"
             label="NREL Email Address"
             name="email"
-            autoComplete="email"
-            autoFocus
             size="small"
-            value={nrelEmail}
             {...register("email", { required: "This field is required", validate: isValidEmail })}
             error={!!errors.email}
             helperText={errors.email?.message}
@@ -113,14 +111,10 @@ const NRELAPIKEYForm = () => {
                 label="NREL API Key"
                 name="nrel_api_key"
                 size="small"
-                value={key}
-                onChange={(e) => {
-                  setKey(e.target.value);
-                }}
-                color={keyIsValid ? "success" : null}
+                {...register("nrelKey", { required: "This field is required" })}
+                color={user.validNRELAPIKey ? "success" : null}
                 error={isError}
-                helperText={errorMessage ? "API Key is invalid" : keyIsValid ? "API Key is valid!" : null}
-                focused
+                helperText={errorMessage ? "API Key is invalid" : user.validNRELAPIKey ? "API Key is valid!" : null}
               />
             </Box>
           </Box>
@@ -130,7 +124,7 @@ const NRELAPIKEYForm = () => {
         </Box>
       </Paper>
 
-      {keyIsValid && !errorMessage && <NRELMenu />}
+      {user.validNRELAPIKey && !errorMessage && <NRELMenu />}
     </Box>
   );
 };

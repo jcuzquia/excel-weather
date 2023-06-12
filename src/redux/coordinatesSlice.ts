@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { ICoordinates } from "../interfaces/coordinates";
 import { RootState } from "./store";
-interface MapState {
+export interface MapState {
   address: string;
   coordinates: ICoordinates | null;
   zoom: number;

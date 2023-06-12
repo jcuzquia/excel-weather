@@ -1,15 +1,14 @@
 import React, { FC } from "react";
-import { useSelector } from "react-redux";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { Redirect, Route, RouteProps } from "react-router-dom";
-import { selectUser } from "../../../redux/userSlice";
+import { auth } from "../../../firebase/config";
 
 interface Props extends RouteProps {
   path: string;
   children: React.ReactNode;
 }
 const PrivateRoute: FC<Props> = ({ children, ...props }) => {
-  const user = useSelector(selectUser);
-
+  const user = useAuthState(auth);
   return (
     <Route
       {...props}

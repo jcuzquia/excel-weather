@@ -10,7 +10,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import React from "react";
-import { selectUser } from "../../../../redux/userSlice";
+import { selectUser } from "../../../../redux/authSlice";
 import Link from "../Link/Link";
 import SettingsMenu from "./SettingsMenu";
 import { useTypedSelector } from "../../../../redux/store";

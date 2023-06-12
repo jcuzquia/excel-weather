@@ -1,16 +1,16 @@
 import { Avatar, Box, IconButton, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { auth } from "../../../../firebase/config";
-import { logout, selectUser } from "../../../../redux/userSlice";
+import { logoutUser, selectUser } from "../../../../redux/authSlice";
+import { useAppDispatch, useTypedSelector } from "../../../../redux/store";
 import Link from "../Link/Link";
-import { useTypedSelector } from "../../../../redux/store";
+import { useHistory } from "react-router-dom";
 
 const SettingsMenu = () => {
   const anchorElUser = React.useRef<null | HTMLElement>(null);
   const [open, setOpen] = useState(false);
   const user = useTypedSelector(selectUser);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const history = useHistory();
 
   const handleOpenUserMenu = () => {
     setOpen(true);
@@ -20,8 +20,9 @@ const SettingsMenu = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logout());
-    auth.signOut();
+    dispatch(logoutUser()).then(() => {
+      history.push("/");
+    });
   };
 
   if (user) {

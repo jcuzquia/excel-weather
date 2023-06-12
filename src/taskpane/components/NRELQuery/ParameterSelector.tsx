@@ -43,9 +43,8 @@ const ParameterSelector: FC<Props> = ({ fullWidth, attributes }) => {
       updatedAttributeList.filter((attribute) => attribute.selected).map((attribute) => attribute.attribute)
     );
   };
-  console.log(attributeStr);
   return (
-    <FormControl sx={{ m: 1 }} margin="dense" fullWidth={fullWidth}>
+    <FormControl sx={{ m: 1, minWidth: 120 }} fullWidth={fullWidth} size="small" margin="dense">
       <InputLabel id="demo-multiple-checkbox-label">Parameters</InputLabel>
       <Select
         size="small"

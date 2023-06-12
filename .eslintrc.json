@@ -1,8 +1,19 @@
 {
   "plugins": ["office-addins"],
   "extends": ["plugin:office-addins/react"],
+  "parserOptions": {
+    "project": ["tsconfig.json"],
+    "sourceType": "module"
+  },
   "env": {
     "browser": true,
     "node": true
+  },
+  "rules": {
+    "import/no-unresolved": 0,
+    "object-curly-spacing": ["error", "always"],
+    // eslint-disable-next-line quote-props
+    "quotes": ["error", "double"],
+    "linebreak-style": ["always", "windows"]
   }
 }

@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 import { SelectorOption } from "../interfaces/SelectorOptions";
-interface FormState {
+export interface FormState {
   interval: string | number;
   intervals: Array<SelectorOption>;
   year: string | number;
@@ -11,6 +11,7 @@ interface FormState {
   resource: string;
   resourceAPI: string;
   resources: Array<SelectorOption>;
+  csvUrl: string;
 }
 
 const initialState: FormState = {
@@ -23,6 +24,7 @@ const initialState: FormState = {
   resourceAPI: "",
   resources: [],
   intervals: [],
+  csvUrl: "",
 };
 
 export const nrelWeatherDataFormSlice = createSlice({
@@ -64,6 +66,10 @@ export const nrelWeatherDataFormSlice = createSlice({
       state.selectedAttributes = action.payload;
       return state;
     },
+    setCSVUrl: (state: FormState, action: PayloadAction<string>) => {
+      state.csvUrl = action.payload;
+      return state;
+    },
     clearForm: (state: FormState) => {
       state = initialState;
       return state;
@@ -80,6 +86,7 @@ export const {
   clearForm,
   setResourceAPI,
   setSelectedAttributes,
+  setCSVUrl,
 } = nrelWeatherDataFormSlice.actions;
 export const selectNRELWeatherDataFormState = (state: RootState) => state.nrelWeatherDataForm;
 

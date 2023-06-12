@@ -4,20 +4,14 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
-import { updateProfile } from "firebase/auth";
-import { setDoc } from "firebase/firestore";
 import React from "react";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import { auth } from "../../../firebase/config";
-import db from "../../../firebase/db";
-import { IUser } from "../../../interfaces/IUser";
+import { useAppDispatch, useTypedSelector } from "../../../redux/store";
+import { fetchFirestoreUser, getError, getStatus, signUpWithEmailAndPassword } from "../../../redux/authSlice";
 import { isValidEmail } from "../../../utils/validations";
 import theme from "../../styles/theme";
 import Link from "../ui/Link/Link";
-import { useDispatch } from "react-redux";
-import { login } from "../../../redux/userSlice";
 
 type FormData = {
   username: string;
@@ -29,27 +23,22 @@ const SignupForm = () => {
   const {
     register,
     handleSubmit,
-    // watch,
+
     formState: { errors },
   } = useForm<FormData>();
 
-  const [createUserWithEmailAndPassword, , authLoading, authError] = useCreateUserWithEmailAndPassword(auth);
   const history = useHistory();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+
+  const authStatus = useTypedSelector(getStatus);
+  const authError = useTypedSelector(getError);
 
   const onSignupUser: SubmitHandler<FormData> = async (data: FormData) => {
-    try {
-      const res = await createUserWithEmailAndPassword(data.email, data.password);
-      await updateProfile(res.user, { displayName: data.username });
-      const newUser: IUser = { email: res.user.email, validNRELAPIKey: false, ref: db.user(res.user.uid) };
-      await setDoc<IUser>(db.user(res.user.uid), newUser);
-
-      dispatch(login(newUser));
-      history.push("/dashboard");
-    } catch (error) {
-      // eslint-disable-next-line no-undef
-      console.error("Error on Signup user");
-    }
+    const user = await dispatch(
+      signUpWithEmailAndPassword({ email: data.email, password: data.password, username: data.username })
+    ).unwrap();
+    await dispatch(fetchFirestoreUser({ id: user.id }));
+    history.push("/dashboard");
   };
   return (
     <Box
@@ -124,9 +113,8 @@ const SignupForm = () => {
             />
           </Grid>
           <Grid item xs={12}>
-            {authLoading ? (
-              <CircularProgress />
-            ) : (
+            {authStatus === "loading" && <CircularProgress />}
+            {authError && (
               <Typography variant="body1" color={theme.palette.error.light}>
                 {authError}
               </Typography>

@@ -23,7 +23,6 @@ const GoogleMapsTextField: FC<Props> = ({ isError, error }) => {
   } = usePlacesAutocomplete({ debounce: 300 });
 
   const handleAddressChange = (_event: ChangeEvent<HTMLInputElement>, newInputValue: string) => {
-    console.log("calling input change", newInputValue.length);
     if (newInputValue.trim().length === 0) {
       dispatch(clearCoordinates());
       dispatch(clearResponse());
@@ -66,7 +65,8 @@ const GoogleMapsTextField: FC<Props> = ({ isError, error }) => {
         onChange={handleSelect}
         onInputChange={handleAddressChange}
         isOptionEqualToValue={(option, value) => {
-          return option === value;
+          console.log("Option", option, "Value", value);
+          return false;
         }}
         renderInput={(params) => (
           <TextField
