@@ -2,14 +2,12 @@ import {
   DocumentData,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
-  SnapshotOptions,
   WithFieldValue,
   collection,
   doc,
 } from "firebase/firestore";
 import { IUser } from "../interfaces/IUser";
 import { dbFirestore } from "./config";
-
 type PathImpl<T, K extends keyof T> = K extends string
   ? T[K] extends Record<string, any>
     ? T[K] extends ArrayLike<any>
@@ -38,15 +36,15 @@ export const converter = <T>(): FirestoreDataConverter<T> => ({
   toFirestore: (data: WithFieldValue<T>): DocumentData => {
     return data as DocumentData;
   },
-  fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): T => {
-    const data = snapshot.data(options);
+  fromFirestore: (snapshot: QueryDocumentSnapshot): T => {
+    const data = snapshot.data();
     return data as T;
   },
 });
 
 const db = {
   users: collection(dbFirestore, "users").withConverter(converter<IUser>()),
-  user: (userId: string) => doc(dbFirestore, "users", userId).withConverter(converter<IUser>()),
+  user: (userId: string) => doc(dbFirestore, `users/${userId}`).withConverter(converter<IUser>()),
 };
 export { db };
 export default db;
