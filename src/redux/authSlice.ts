@@ -47,8 +47,8 @@ export const signUpWithEmailAndPassword = createAsyncThunk<IUser, SignUpArgument
     try {
       const response = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(response.user, { displayName: username });
-      const { uid, email: fEmail } = response.user;
-      const newUser: IUser = { id: uid, email: fEmail, validNRELAPIKey: false };
+      const { uid, email: fEmail, displayName } = response.user;
+      const newUser: IUser = { id: uid, email: fEmail, validNRELAPIKey: false, username: displayName };
       return newUser;
     } catch (error) {
       if (error instanceof FirebaseError) {

@@ -11,11 +11,10 @@ import Typography from "@mui/material/Typography";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import { useAppDispatch, useTypedSelector } from "../../../redux/store";
+import { useAuthStore } from "../../../stores/auth/auth.store";
 import { isValidEmail } from "../../../utils/validations";
 import theme from "../../styles/theme";
 import Link from "../ui/Link/Link";
-import { getError, getStatus, loginWithEmailAndPassword } from "../../../redux/authSlice";
 
 type FormData = {
   email: string;
@@ -29,15 +28,12 @@ const LoginForm = () => {
     // watch,
     formState: { errors },
   } = useForm<FormData>();
-  const dispatch = useAppDispatch();
   const history = useHistory();
-  const status = useTypedSelector(getStatus);
-  const error = useTypedSelector(getError);
-
-  console.log("status is: ", status);
+  const loginUser = useAuthStore((state) => state.loginUser);
+  const authError = useAuthStore((state) => state.error);
 
   const onLoginUser: SubmitHandler<FormData> = async (data: FormData) => {
-    await dispatch(loginWithEmailAndPassword({ email: data.email, password: data.password })).unwrap();
+    await loginUser(data.email, data.password);
     history.push("/dashboard");
   };
   return (
@@ -99,9 +95,9 @@ const LoginForm = () => {
         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
           {status === "loading" ? <CircularProgress /> : "Sign In"}
         </Button>
-        {error && (
+        {authError && (
           <Typography variant="body1" color={theme.palette.error.light}>
-            {error}
+            {authError.message}
           </Typography>
         )}
 

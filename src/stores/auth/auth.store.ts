@@ -12,28 +12,45 @@ import { persist } from "zustand/middleware";
 import { auth } from "../../firebase/config";
 import db from "../../firebase/db";
 import { AuthStatus } from "../../interfaces";
-import { User } from "../../interfaces/user.interface";
 
 export interface AuthState {
   status: AuthStatus;
-  user?: User;
+  isLoading: boolean;
+  currentUser?: FirebaseUser;
+  error?: Error;
   loginUser: (email: string, password: string) => Promise<void>;
   logoutUser: () => void;
   createUser: (username: string, email: string, password: string) => Promise<FirebaseUser | FirebaseError>;
+  checkAuthStatus: () => FirebaseUser | undefined;
+  setLoggedIn: (user?: FirebaseUser) => void;
 }
 
 const storeApi: StateCreator<AuthState> = (set) => ({
   status: "pending",
   token: undefined,
-  user: undefined,
-
+  isLoading: false,
+  error: undefined,
+  currentUser: undefined,
+  checkAuthStatus: () => {
+    return auth.currentUser;
+  },
+  setLoggedIn: (user?: FirebaseUser) => {
+    if (user) {
+      set((state) => ({ ...state, user, status: "authorized" }));
+    } else {
+      set((state) => ({ ...state, user, status: "unauthorized" }));
+    }
+  },
   createUser: async (username: string, email: string, password: string) => {
+    set((state) => ({ ...state, isLoading: true }));
     try {
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      set((state) => ({ ...state, status: "authorized", currentUser: user }));
       await updateProfile(user, { displayName: username });
-      await setDoc(db.user(user.uid), { email: user.email!, id: user.uid, validNRELAPIKey: false });
+
       return user;
     } catch (error) {
+      set((state) => ({ ...state, isLoading: false, error, status: "unauthorized" }));
       if (error instanceof FirebaseError) {
         return error;
       } else {
@@ -46,12 +63,11 @@ const storeApi: StateCreator<AuthState> = (set) => ({
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
 
-      const userDoc = await getDoc(db.user(response.user.uid));
+      set((state) => ({ ...state, status: "authorized" }));
 
-      const user = userDoc.data();
-
-      return user;
+      return response.user;
     } catch (error) {
+      set((state) => ({ ...state, isLoading: false, error, status: "unauthorized" }));
       if (error instanceof FirebaseError) {
         return error.message;
       }
@@ -62,10 +78,10 @@ const storeApi: StateCreator<AuthState> = (set) => ({
   logoutUser: async () => {
     try {
       await signOut(auth);
-      set((state) => ({ ...state, status: "pending" }));
+      set((state) => ({ ...state, status: "unauthorized", error: undefined }));
       return null;
     } catch (error) {
-      set((state) => ({ ...state, status: "pending" }));
+      set((state) => ({ ...state, status: "unauthorized", error: error }));
       if (error instanceof FirebaseError) {
         return error.message;
       }

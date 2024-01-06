@@ -1,15 +1,16 @@
-import { Avatar, Box, IconButton, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
+import { Avatar, Box, Button, IconButton, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
 import React, { useState } from "react";
-import { logoutUser, selectUser } from "../../../../redux/authSlice";
-import { useAppDispatch, useTypedSelector } from "../../../../redux/store";
-import Link from "../Link/Link";
 import { useHistory } from "react-router-dom";
+import { useAuthStore } from "../../../../stores/auth/auth.store";
+import Link from "../Link/Link";
 
-const SettingsMenu = () => {
+export const SettingsMenu = () => {
   const anchorElUser = React.useRef<null | HTMLElement>(null);
   const [open, setOpen] = useState(false);
-  const user = useTypedSelector(selectUser);
-  const dispatch = useAppDispatch();
+
+  const logoutUser = useAuthStore((state) => state.logoutUser);
+  const user = useAuthStore((state) => state.checkAuthStatus());
+
   const history = useHistory();
 
   const handleOpenUserMenu = () => {
@@ -20,10 +21,10 @@ const SettingsMenu = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logoutUser()).then(() => {
-      history.push("/");
-    });
+    logoutUser();
+    history.push("/");
   };
+  console.log(status);
 
   if (user) {
     return (
@@ -72,8 +73,15 @@ const SettingsMenu = () => {
       </Box>
     );
   } else {
-    return null;
+    return (
+      <Box display={"flex"} gap={1}>
+        <Button variant="outlined" color="primary" size="small" onClick={() => history.push("/login")}>
+          Login
+        </Button>
+        <Button variant="contained" color="secondary" size="small" onClick={() => history.push("/signup")}>
+          Signup
+        </Button>
+      </Box>
+    );
   }
 };
-
-export default SettingsMenu;

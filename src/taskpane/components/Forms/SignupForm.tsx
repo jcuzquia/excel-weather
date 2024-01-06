@@ -4,15 +4,15 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
+import { FirebaseError } from "firebase/app";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import { useAppDispatch, useTypedSelector } from "../../../redux/store";
-import { fetchFirestoreUser, getError, getStatus, signUpWithEmailAndPassword } from "../../../redux/authSlice";
+import { useAuthStore } from "../../../stores/auth/auth.store";
+import { useUserStore } from "../../../stores/user/user.store";
 import { isValidEmail } from "../../../utils/validations";
 import theme from "../../styles/theme";
 import Link from "../ui/Link/Link";
-
 type FormData = {
   username: string;
   email: string;
@@ -26,19 +26,21 @@ const SignupForm = () => {
 
     formState: { errors },
   } = useForm<FormData>();
-
+  const createUser = useAuthStore((state) => state.createUser);
+  const isAuthLoading = useAuthStore((state) => state.isLoading);
+  const authError = useAuthStore((state) => state.error);
+  const createFirestoreUser = useUserStore((state) => state.createFirestoreUser);
+  const isUserLoading = useUserStore((state) => state.isLoading);
+  const userError = useUserStore((state) => state.error);
   const history = useHistory();
-  const dispatch = useAppDispatch();
-
-  const authStatus = useTypedSelector(getStatus);
-  const authError = useTypedSelector(getError);
 
   const onSignupUser: SubmitHandler<FormData> = async (data: FormData) => {
-    const user = await dispatch(
-      signUpWithEmailAndPassword({ email: data.email, password: data.password, username: data.username })
-    ).unwrap();
-    await dispatch(fetchFirestoreUser({ id: user.id }));
-    history.push("/dashboard");
+    try {
+      const user = await createUser(data.username, data.email, data.password);
+      if (user instanceof FirebaseError) return;
+      const iuser = await createFirestoreUser(user);
+      history.push("/dashboard");
+    } catch (error) {}
   };
   return (
     <Box
@@ -113,10 +115,15 @@ const SignupForm = () => {
             />
           </Grid>
           <Grid item xs={12}>
-            {authStatus === "loading" && <CircularProgress />}
+            {isAuthLoading || (isUserLoading && <CircularProgress />)}
             {authError && (
               <Typography variant="body1" color={theme.palette.error.light}>
-                {authError}
+                {authError.message}
+              </Typography>
+            )}
+            {userError && (
+              <Typography variant="body1" color={theme.palette.error.light}>
+                {userError.message}
               </Typography>
             )}
           </Grid>

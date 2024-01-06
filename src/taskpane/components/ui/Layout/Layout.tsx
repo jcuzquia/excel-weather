@@ -1,15 +1,22 @@
 import { Box } from "@mui/material";
-import React from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
+import React, { useEffect } from "react";
+import { Navbar } from "..";
+import { useAuthStore } from "../../../../stores/auth/auth.store";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../../firebase/config";
-import { useAppDispatch } from "../../../../redux/store";
-import Navbar from "../AppBar/Navbar";
 
 interface Props {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<Props> = ({ children }) => {
+  const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      setLoggedIn(user);
+    });
+  }, []);
+
   return (
     <Box width="100%">
       <Navbar />

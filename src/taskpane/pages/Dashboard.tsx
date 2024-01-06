@@ -1,27 +1,19 @@
-import { Spinner } from "@fluentui/react";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, List } from "@mui/material";
 import React from "react";
-import { getStatus, selectUser } from "../../redux/authSlice";
-import { useTypedSelector } from "../../redux/store";
-import NRELAPIKEYForm from "../components/NRELAPIKeyForm/NRELAPIKEYForm";
+import { DashboardLayout } from "../components/ui";
 const Dashboard: React.FC = () => {
-  const user = useTypedSelector(selectUser);
-  const state = useTypedSelector(getStatus);
-
-  if (!user) {
-    return null;
-  }
-
   return (
-    <Box width={"100%"} sx={{ pt: 3 }}>
-      <Box p={1}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            {state === "loading" ? <Spinner /> : <NRELAPIKEYForm />}
+    <DashboardLayout>
+      <Box width={"100%"} sx={{ pt: 3 }}>
+        <Box p={1}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <List></List>
+            </Grid>
           </Grid>
-        </Grid>
+        </Box>
       </Box>
-    </Box>
+    </DashboardLayout>
   );
 };
 

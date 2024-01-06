@@ -4,7 +4,6 @@ import React from "react";
 import { selectNRELQueryState } from "../../redux/nrelQuerySlice";
 import { useTypedSelector } from "../../redux/store";
 import GoogleMapsAutoCompleteForm from "../components/GoogleMaps/GoogleMapsAutoCompleteForm";
-import Map from "../components/GoogleMaps/Map";
 import NRELWeatherQueryForm from "../components/NRELQuery/NRELWeatherQueryForm";
 
 const NRELWeatherPage: React.FC = () => {
@@ -20,7 +19,6 @@ const NRELWeatherPage: React.FC = () => {
           <GoogleMapsAutoCompleteForm />
         </Box>
       </Box>
-      <Map />
       <Box width={"100%"}>{isValidResponse ? <NRELWeatherQueryForm /> : null}</Box>
     </Box>
   );

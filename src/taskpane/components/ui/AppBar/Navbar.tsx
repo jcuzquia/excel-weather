@@ -10,13 +10,12 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import React from "react";
-import { selectUser } from "../../../../redux/authSlice";
 import Link from "../Link/Link";
-import SettingsMenu from "./SettingsMenu";
-import { useTypedSelector } from "../../../../redux/store";
+import { useAuthStore } from "../../../../stores/auth/auth.store";
+import { SettingsMenu } from "..";
 
-const Navbar = () => {
-  const user = useTypedSelector(selectUser);
+export const Navbar = () => {
+  const user = useAuthStore((state) => state.checkAuthStatus());
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
@@ -48,7 +47,7 @@ const Navbar = () => {
               textDecoration: "none",
             }}
           >
-            Excel Weather
+            EE-Toolkit
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -103,7 +102,7 @@ const Navbar = () => {
           </Box>
           <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
-            variant="h5"
+            variant="subtitle1"
             noWrap
             component="a"
             href=""
@@ -112,13 +111,13 @@ const Navbar = () => {
               display: { xs: "flex", md: "none" },
               flexGrow: 1,
               fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
+              fontWeight: 400,
+              letterSpacing: ".1rem",
               color: "inherit",
               textDecoration: "none",
             }}
           >
-            Excel Weather
+            EE-Toolkit
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             <Link href="/">
@@ -151,5 +150,3 @@ const Navbar = () => {
     </AppBar>
   );
 };
-
-export default Navbar;

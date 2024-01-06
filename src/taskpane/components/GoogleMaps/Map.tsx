@@ -1,36 +1,23 @@
 import { Box } from "@mui/material";
 import GoogleMapReact from "google-map-react";
 import React from "react";
-import { initialMapState, selectMapState } from "../../../redux/coordinatesSlice";
-import { useTypedSelector } from "../../../redux/store";
-import Marker from "./Marker";
-import { useEffect, useState } from "react";
-import { ICoordinates } from "../../../interfaces/coordinates";
+import { usePlacesStore } from "../../../stores/places/places.store";
+import { useMapStore } from "../../../stores/map/map.store";
 
-const Map = () => {
-  const { coordinates, zoom } = useTypedSelector(selectMapState);
-  const [coordinatesState, setCoordinatesState] = useState<ICoordinates | null>(null);
-  useEffect(() => {
-    setCoordinatesState(coordinates);
-  }, [coordinates]);
-
+export const MapView = () => {
+  const userLocation = usePlacesStore((state) => state.userLocation);
+  const isLoading = usePlacesStore((state) => state.isLoading);
+  const setMap = useMapStore((state) => state.setMap);
   return (
     <Box width={"100%"} height={"30vh"}>
       <GoogleMapReact
         bootstrapURLKeys={{ key: "AIzaSyBveugtwt78z1xoVcn2sZtT89b7IDpBJww" }}
-        defaultCenter={coordinates}
+        defaultCenter={{ lat: 45, lng: 45 }}
         defaultZoom={15}
-        center={coordinatesState}
+        center={userLocation}
         yesIWantToUseGoogleMapApiInternals
-        zoom={zoom}
-      >
-        <Marker
-          lat={coordinates ? coordinates.lat : initialMapState.coordinates.lat}
-          lng={coordinates ? coordinates.lng : initialMapState.coordinates.lng}
-        />
-      </GoogleMapReact>
+        zoom={11}
+      ></GoogleMapReact>
     </Box>
   );
 };
-
-export default Map;
