@@ -9,7 +9,7 @@ export const MapView = () => {
   const isLoading = usePlacesStore((state) => state.isLoading);
   const setMap = useMapStore((state) => state.setMap);
   return (
-    <Box width={"100%"} height={"30vh"}>
+    <Box width={"100%"} height={"40vh"}>
       <GoogleMapReact
         bootstrapURLKeys={{ key: "AIzaSyBveugtwt78z1xoVcn2sZtT89b7IDpBJww" }}
         defaultCenter={{ lat: 45, lng: 45 }}

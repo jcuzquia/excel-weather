@@ -7,7 +7,6 @@ import { functions } from "../../../firebase/config";
 import { useGetValidNRELParams } from "../../../hooks/useGetValidNRELParams";
 import { NRELResponseQuery } from "../../../interfaces/NRELQuery";
 import { SelectorOption } from "../../../interfaces/SelectorOptions";
-import { selectUser } from "../../../redux/authSlice";
 import { selectMapState } from "../../../redux/coordinatesSlice";
 import {
   selectNRELWeatherDataFormState,
@@ -24,13 +23,14 @@ import { useAppDispatch, useTypedSelector } from "../../../redux/store";
 import { getResourceItems } from "../../../utils/responseOptions";
 import CustomSelector from "../ui/CustomSelector/CustomSelector";
 import ParameterSelector from "./ParameterSelector";
+import { useUserStore } from "../../../stores/user/user.store";
 interface Props {
   response: NRELResponseQuery;
 }
 
 const NRELQuerySuccess: FC<Props> = ({ response }) => {
   const [loading, setLoading] = useState(false);
-  const user = useTypedSelector(selectUser);
+  const user = useUserStore((state) => state.user);
   const dispatch = useAppDispatch();
   const { interval, intervals, resource, resources, year, selectedAttributes, years, resourceAPI } =
     useTypedSelector(selectNRELWeatherDataFormState);

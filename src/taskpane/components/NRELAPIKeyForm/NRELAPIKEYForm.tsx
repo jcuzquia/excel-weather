@@ -4,12 +4,12 @@ import React, { FC } from "react";
 import { useForm } from "react-hook-form";
 import { excelWeatherApi } from "../../../api/excel-weatherApi";
 import { IUser } from "../../../interfaces/IUser";
-import { selectUser, updateFirestoreUser } from "../../../redux/authSlice";
 import { useAppDispatch, useTypedSelector } from "../../../redux/store";
 import { isValidEmail } from "../../../utils/validations";
 import NRELMenu from "../NRELMenu/NRELMenu";
 import Link from "../ui/Link/Link";
 import { useEffect } from "react";
+import { useUserStore } from "../../../stores/user/user.store";
 
 type FormData = {
   email: string;
@@ -18,7 +18,7 @@ type FormData = {
 
 const NRELAPIKEYForm: FC = () => {
   const dispatch = useAppDispatch();
-  const user = useTypedSelector(selectUser);
+  const user = useUserStore((state) => state.user);
   const {
     register,
     handleSubmit,
@@ -46,7 +46,7 @@ const NRELAPIKEYForm: FC = () => {
         const updateUser: IUser = { ...user, validNRELAPIKey: validAPI, nrelAPIKey: key };
 
         console.log("THIS IS THE UPDATE USER!!", updateUser);
-        dispatch(updateFirestoreUser({ user: updateUser }));
+        //! TODO dispatch(updateFirestoreUser({ user: updateUser }));
 
         return data;
       } else {

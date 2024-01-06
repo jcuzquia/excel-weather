@@ -6,11 +6,9 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { getDoc, setDoc } from "firebase/firestore";
 import { StateCreator, create } from "zustand";
 import { persist } from "zustand/middleware";
 import { auth } from "../../firebase/config";
-import db from "../../firebase/db";
 import { AuthStatus } from "../../interfaces";
 
 export interface AuthState {

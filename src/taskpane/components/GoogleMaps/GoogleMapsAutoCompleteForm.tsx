@@ -4,14 +4,14 @@ import React from "react";
 import GoogleMapsTextField from "./GoogleMapsTextField";
 import { excelWeatherQueryApi } from "../../../api/excel-weatherApi";
 import { useAppDispatch, useTypedSelector } from "../../../redux/store";
-import { selectUser } from "../../../redux/authSlice";
 import { NRELResponseQuery } from "../../../interfaces/NRELQuery";
 import { selectMapState } from "../../../redux/coordinatesSlice";
 import { clearResponse, responseSuccess } from "../../../redux/nrelQuerySlice";
 import { clearForm } from "../../../redux/nrelWeatherDataFormSlice";
+import { useUserStore } from "../../../stores/user/user.store";
 
-const GoogleMapsAutoCompleteForm = () => {
-  const user = useTypedSelector(selectUser);
+export const GoogleMapsAutoCompleteForm = () => {
+  const user = useUserStore((state) => state.user);
   const { coordinates } = useTypedSelector(selectMapState);
   const dispatch = useAppDispatch();
   const { error, isError, refetch } = useQuery({
@@ -38,7 +38,7 @@ const GoogleMapsAutoCompleteForm = () => {
   const disabled = coordinates ? false : true;
 
   return (
-    <Box width={"100%"} mt={2} display={"flex"} alignItems={"center"} gap={1}>
+    <Box width={"100%"} display={"flex"} alignItems={"center"} gap={1}>
       <GoogleMapsTextField error={error} isError={isError} />
       <Box>
         <Button variant="contained" size="small" onClick={handleGetQueryOptions} disabled={disabled}>
@@ -48,5 +48,3 @@ const GoogleMapsAutoCompleteForm = () => {
     </Box>
   );
 };
-
-export default GoogleMapsAutoCompleteForm;

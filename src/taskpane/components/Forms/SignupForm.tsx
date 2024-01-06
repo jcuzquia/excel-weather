@@ -35,6 +35,9 @@ const SignupForm = () => {
   const history = useHistory();
 
   const onSignupUser: SubmitHandler<FormData> = async (data: FormData) => {
+    if (!data.username) return;
+    if (!data.email) return;
+    if (!data.password) return;
     try {
       const user = await createUser(data.username, data.email, data.password);
       if (user instanceof FirebaseError) return;

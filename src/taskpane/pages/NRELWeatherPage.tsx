@@ -3,7 +3,6 @@ import Typography from "@mui/material/Typography";
 import React from "react";
 import { selectNRELQueryState } from "../../redux/nrelQuerySlice";
 import { useTypedSelector } from "../../redux/store";
-import GoogleMapsAutoCompleteForm from "../components/GoogleMaps/GoogleMapsAutoCompleteForm";
 import NRELWeatherQueryForm from "../components/NRELQuery/NRELWeatherQueryForm";
 
 const NRELWeatherPage: React.FC = () => {
@@ -15,8 +14,6 @@ const NRELWeatherPage: React.FC = () => {
       <Box width={"100%"} display={"flex"} flexDirection={"column"} m={1}>
         <Box m={1}>
           <Typography variant="h5">Start with a location:</Typography>
-
-          <GoogleMapsAutoCompleteForm />
         </Box>
       </Box>
       <Box width={"100%"}>{isValidResponse ? <NRELWeatherQueryForm /> : null}</Box>
