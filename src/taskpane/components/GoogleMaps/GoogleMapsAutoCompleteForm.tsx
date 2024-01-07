@@ -1,47 +1,34 @@
 import { Box, Button } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import GoogleMapsTextField from "./GoogleMapsTextField";
-import { excelWeatherQueryApi } from "../../../api/excel-weatherApi";
-import { useAppDispatch, useTypedSelector } from "../../../redux/store";
-import { NRELResponseQuery } from "../../../interfaces/NRELQuery";
 import { selectMapState } from "../../../redux/coordinatesSlice";
-import { clearResponse, responseSuccess } from "../../../redux/nrelQuerySlice";
-import { clearForm } from "../../../redux/nrelWeatherDataFormSlice";
+import { useTypedSelector } from "../../../redux/store";
+import { useNRELApiStore } from "../../../stores/nrel-api/nrel-api.store";
+import { usePlacesStore } from "../../../stores/places/places.store";
 import { useUserStore } from "../../../stores/user/user.store";
+import GoogleMapsTextField from "./GoogleMapsTextField";
 
 export const GoogleMapsAutoCompleteForm = () => {
   const user = useUserStore((state) => state.user);
-  const { coordinates } = useTypedSelector(selectMapState);
-  const dispatch = useAppDispatch();
-  const { error, isError, refetch } = useQuery({
-    queryKey: ["queryData"],
-    queryFn: async () => {
-      const { data } = await excelWeatherQueryApi.get(
-        `nsrdb_data_query.json?api_key=${user.nrelAPIKey}&lat=${coordinates?.lat}&lon=${coordinates?.lng}`
-      );
-      const nrelQueryData = data as NRELResponseQuery;
-      dispatch(clearForm());
-      dispatch(clearResponse());
+  const error = usePlacesStore((state) => state.error);
+  const selectedLocation = usePlacesStore((state) => state.selectedLocation);
+  const clearCoordinates = usePlacesStore((state) => state.clearCoordinates);
 
-      dispatch(responseSuccess(nrelQueryData));
-
-      return data;
-    },
-    enabled: false,
-  });
+  const fetchNRELResponseQuery = useNRELApiStore((state) => state.fetchNRELResponseQuery);
 
   const handleGetQueryOptions = () => {
-    refetch();
+    fetchNRELResponseQuery(selectedLocation);
   };
 
-  const disabled = coordinates ? false : true;
-
   return (
-    <Box width={"100%"} display={"flex"} alignItems={"center"} gap={1}>
-      <GoogleMapsTextField error={error} isError={isError} />
+    <Box width={"100%"} display={"flex"} alignItems={"center"} gap={1} paddingLeft={1} paddingRight={1}>
+      <GoogleMapsTextField error={error?.message} isError={!!error} />
       <Box>
-        <Button variant="contained" size="small" onClick={handleGetQueryOptions} disabled={disabled}>
+        <Button
+          variant="contained"
+          size="small"
+          onClick={handleGetQueryOptions}
+          disabled={selectedLocation ? false : true}
+        >
           Get Data
         </Button>
       </Box>

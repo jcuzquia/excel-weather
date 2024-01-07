@@ -14,7 +14,8 @@ import { useHistory } from "react-router-dom";
 import { useAuthStore } from "../../../stores/auth/auth.store";
 import { isValidEmail } from "../../../utils/validations";
 import theme from "../../styles/theme";
-import Link from "../ui/Link/Link";
+import Link from "../../components/ui/Link/Link";
+import { useUserStore } from "../../../stores/user/user.store";
 
 type FormData = {
   email: string;
@@ -30,10 +31,14 @@ const LoginForm = () => {
   } = useForm<FormData>();
   const history = useHistory();
   const loginUser = useAuthStore((state) => state.loginUser);
+  const setFirestoreUser = useUserStore((state) => state.setFirestoreUser);
   const authError = useAuthStore((state) => state.error);
 
   const onLoginUser: SubmitHandler<FormData> = async (data: FormData) => {
-    await loginUser(data.email, data.password);
+    try {
+      const user = await loginUser(data.email, data.password);
+      setFirestoreUser(user);
+    } catch (error) {}
     history.push("/dashboard");
   };
   return (

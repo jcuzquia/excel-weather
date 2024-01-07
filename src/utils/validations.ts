@@ -1,4 +1,4 @@
-export const isValidEmail = (email: string): string | undefined => {
+export const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email) ? undefined : "Invalid email";
+  return emailRegex.test(email);
 };

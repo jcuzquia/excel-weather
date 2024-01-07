@@ -1,13 +1,14 @@
 import * as React from "react";
 import { Route, HashRouter as Router, Switch } from "react-router-dom";
-import Dashboard from "../pages/Dashboard";
-import LoginPage from "../pages/LoginPage";
-import Main from "../pages/Main";
-import NRELWeatherPage from "../pages/NRELWeatherPage";
-import Signup from "../pages/Signup";
+import Dashboard from "../pages/Dashboard/Dashboard";
+import LoginPage from "../pages/Login/LoginPage";
+import Main from "../pages/Home/Main";
+import NRELWeatherPage from "../pages/NRELApi/NRELWeatherPage";
+import Signup from "../pages/Signup/Signup";
 import PrivateRoute from "./Protection/PrivateRoute";
 import Layout from "./ui/Layout/Layout";
 import { Progress } from "./ui";
+import ProfilePage from "../pages/Profile/ProfilePage";
 
 export interface AppProps {
   title: string;
@@ -32,6 +33,9 @@ export const App: React.FC<AppProps> = ({ title, isOfficeInitialized }) => {
           </PrivateRoute>
           <PrivateRoute exact path="/nrel-weather">
             <NRELWeatherPage />
+          </PrivateRoute>
+          <PrivateRoute exact path="/profile">
+            <ProfilePage />
           </PrivateRoute>
         </Layout>
       </Switch>

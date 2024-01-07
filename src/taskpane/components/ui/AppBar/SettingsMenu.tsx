@@ -51,7 +51,9 @@ export const SettingsMenu = () => {
           onClose={handleCloseUserMenu}
         >
           <MenuItem onClick={handleCloseUserMenu}>
-            <Typography textAlign="center">Profile</Typography>
+            <Link href="/profile">
+              <Typography textAlign="center">Profile</Typography>
+            </Link>
           </MenuItem>
           <MenuItem onClick={handleCloseUserMenu}>
             <Typography textAlign="center">Account</Typography>

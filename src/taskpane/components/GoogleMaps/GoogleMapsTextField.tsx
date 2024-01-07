@@ -2,9 +2,10 @@ import { Autocomplete, Box, TextField } from "@mui/material";
 import React, { ChangeEvent, FC, useEffect } from "react";
 import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocomplete";
 import { ICoordinates } from "../../../interfaces/coordinates";
-import { clearCoordinates, selectMapState, setAddress, setLocation } from "../../../redux/coordinatesSlice";
+import { setAddress, setLocation } from "../../../redux/coordinatesSlice";
 import { clearResponse } from "../../../redux/nrelQuerySlice";
-import { useAppDispatch, useTypedSelector } from "../../../redux/store";
+import { usePlacesStore } from "../../../stores/places/places.store";
+import { useNRELApiStore } from "../../../stores/nrel-api/nrel-api.store";
 
 interface Props {
   isError: boolean;
@@ -12,8 +13,9 @@ interface Props {
 }
 
 const GoogleMapsTextField: FC<Props> = ({ isError, error }) => {
-  const { address } = useTypedSelector(selectMapState);
-  const dispatch = useAppDispatch();
+  const clearCoordinates = usePlacesStore((state) => state.clearCoordinates);
+  const fetchSelectedCoordinates = usePlacesStore((state) => state.fetchSelectedCoordinates);
+  const setNRELResponseQuery = useNRELApiStore((state) => state.setNRELResponseQuery);
 
   const {
     value,
@@ -24,24 +26,16 @@ const GoogleMapsTextField: FC<Props> = ({ isError, error }) => {
 
   const handleAddressChange = (_event: ChangeEvent<HTMLInputElement>, newInputValue: string) => {
     if (newInputValue.trim().length === 0) {
-      dispatch(clearCoordinates());
-      dispatch(clearResponse());
+      clearCoordinates();
+      setNRELResponseQuery(undefined);
     }
     setValue(newInputValue);
   };
 
-  useEffect(() => {
-    setValue(address);
-  }, []);
-
   const handleSelect = async (_event: ChangeEvent<HTMLInputElement>, newValue: string | null) => {
     setValue(newValue, false);
     clearSuggestions();
-    const results = await getGeocode({ address: newValue });
-    const result = await getLatLng(results[0]);
-    const coordinates: ICoordinates = { lat: result.lat, lng: result.lng };
-    dispatch(setLocation({ coordinates, zoom: 16, address: value }));
-    dispatch(setAddress(newValue));
+    fetchSelectedCoordinates(newValue);
   };
 
   let suggestions: string[];
@@ -79,7 +73,7 @@ const GoogleMapsTextField: FC<Props> = ({ isError, error }) => {
             helperText={error}
             inputProps={{
               ...params.inputProps,
-              autoComplete: "new-password", // disable autocomplete and autofill
+              autoComplete: "Address", // disable autocomplete and autofill
             }}
           />
         )}

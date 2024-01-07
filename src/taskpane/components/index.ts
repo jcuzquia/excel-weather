@@ -1,2 +1,2 @@
-export { MainListItem } from "./ui/ListItem/MainListItem";
+export { MainListItem } from "../pages/Home/MainListItem";
 export { GoogleMapsAutoCompleteForm } from "./GoogleMaps/GoogleMapsAutoCompleteForm";

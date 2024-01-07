@@ -12,7 +12,7 @@ import { useAuthStore } from "../../../stores/auth/auth.store";
 import { useUserStore } from "../../../stores/user/user.store";
 import { isValidEmail } from "../../../utils/validations";
 import theme from "../../styles/theme";
-import Link from "../ui/Link/Link";
+import Link from "../../components/ui/Link/Link";
 type FormData = {
   username: string;
   email: string;
@@ -41,9 +41,11 @@ const SignupForm = () => {
     try {
       const user = await createUser(data.username, data.email, data.password);
       if (user instanceof FirebaseError) return;
-      const iuser = await createFirestoreUser(user);
+      await createFirestoreUser(user);
       history.push("/dashboard");
-    } catch (error) {}
+    } catch (error) {
+      console.error(error.message);
+    }
   };
   return (
     <Box

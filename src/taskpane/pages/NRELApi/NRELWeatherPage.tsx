@@ -1,9 +1,9 @@
 import { Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import React from "react";
-import { selectNRELQueryState } from "../../redux/nrelQuerySlice";
-import { useTypedSelector } from "../../redux/store";
-import NRELWeatherQueryForm from "../components/NRELQuery/NRELWeatherQueryForm";
+import { selectNRELQueryState } from "../../../redux/nrelQuerySlice";
+import { useTypedSelector } from "../../../redux/store";
+import NRELWeatherQueryForm from "../../components/NRELQuery/NRELWeatherQueryForm";
 
 const NRELWeatherPage: React.FC = () => {
   const response = useTypedSelector(selectNRELQueryState);

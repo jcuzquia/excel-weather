@@ -1,4 +1,5 @@
 import LocationSearchingIcon from "@mui/icons-material/LocationSearching";
+import { Box } from "@mui/material";
 import React, { FC } from "react";
 interface Props {
   lat: number;

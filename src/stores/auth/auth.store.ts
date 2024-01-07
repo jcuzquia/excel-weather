@@ -1,6 +1,7 @@
 import { FirebaseError } from "firebase/app";
 import {
   User as FirebaseUser,
+  User,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
@@ -16,7 +17,7 @@ export interface AuthState {
   isLoading: boolean;
   currentUser?: FirebaseUser;
   error?: Error;
-  loginUser: (email: string, password: string) => Promise<void>;
+  loginUser: (email: string, password: string) => Promise<User>;
   logoutUser: () => void;
   createUser: (username: string, email: string, password: string) => Promise<FirebaseUser | FirebaseError>;
   checkAuthStatus: () => FirebaseUser | undefined;
@@ -61,7 +62,7 @@ const storeApi: StateCreator<AuthState> = (set) => ({
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
 
-      set((state) => ({ ...state, status: "authorized" }));
+      set((state) => ({ ...state, status: "authorized", currentUser: response.user }));
 
       return response.user;
     } catch (error) {
