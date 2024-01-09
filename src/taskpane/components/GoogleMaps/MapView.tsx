@@ -11,6 +11,7 @@ export const MapView = () => {
   const selectedLocation = usePlacesStore((state) => state.selectedLocation);
   const selectedAddress = usePlacesStore((state) => state.selectedAddress);
   const zoom = useMapStore((state) => state.zoom);
+
   return (
     <Box width={"100%"} height={"40vh"}>
       <GoogleMapReact
@@ -21,7 +22,7 @@ export const MapView = () => {
         yesIWantToUseGoogleMapApiInternals
         zoom={zoom}
       >
-        <Marker lng={selectedLocation.lng} lat={selectedLocation.lat} />
+        {selectedLocation && <Marker lng={selectedLocation.lng} lat={selectedLocation.lat} />}
       </GoogleMapReact>
       <Box display={"flex"} alignItems={"center"} gap={1} ml={1}>
         <Typography variant="caption" sx={{ color: "white" }}>

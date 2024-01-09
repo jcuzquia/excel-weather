@@ -24,7 +24,6 @@ export const SettingsMenu = () => {
     logoutUser();
     history.push("/");
   };
-  console.log(status);
 
   if (user) {
     return (
@@ -64,7 +63,7 @@ export const SettingsMenu = () => {
             </Link>
           </MenuItem>
           <MenuItem onClick={handleCloseUserMenu}>
-            <Link href="/nrel-weather">
+            <Link href="/dashboard/nrel-weather">
               <Typography textAlign="center">Get Weather</Typography>
             </Link>
           </MenuItem>

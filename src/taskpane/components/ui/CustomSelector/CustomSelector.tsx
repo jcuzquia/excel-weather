@@ -4,13 +4,12 @@ import { SelectorOption } from "../../../../interfaces/SelectorOptions";
 
 interface Props {
   fullWidth?: boolean;
-  value: string | number;
+  value?: string | number;
   items: Array<SelectorOption>;
   label: string;
   isError?: boolean;
   errorMessage?: string;
   hasEmptyInitialValue: boolean;
-  handleChange: (e: SelectChangeEvent) => void;
 }
 
 const CustomSelector: FC<Props> = ({
@@ -21,12 +20,12 @@ const CustomSelector: FC<Props> = ({
   value,
   hasEmptyInitialValue,
   errorMessage,
-  handleChange,
+  ...rest
 }) => {
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} error={isError} fullWidth={fullWidth} size="small" margin="dense">
       <InputLabel id="select-label">{label}</InputLabel>
-      <Select labelId="select-label" id="select" value={value} label={label} onChange={handleChange}>
+      <Select labelId="select-label" id="select" value={value} label={label} {...rest}>
         {hasEmptyInitialValue && (
           <MenuItem value="">
             <em>None</em>

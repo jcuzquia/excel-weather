@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import React from "react";
-import NRELAPIKEYForm from "../../components/NRELAPIKeyForm/NRELAPIKEYForm";
+import NRELAPIKEYForm from "../NRELApi/NRELAPIKEYForm";
 import { useUserStore } from "../../../stores/user/user.store";
 
 const ProfilePage = () => {

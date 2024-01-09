@@ -66,10 +66,10 @@ const g = getGlobal() as any;
 // The add-in command functions need to be available in global scope
 g.action = action;
 
-export function writeWeatherDataToOfficeDocument(csvData: string): Promise<any> {
+export function writeWeatherDataToOfficeDocument(csvData: string, worksheetName: string): Promise<any> {
   return Excel.run(function (context) {
     const wb = context.workbook;
-    const ws = wb.worksheets.add("WEATHER");
+    const ws = wb.worksheets.add(worksheetName);
 
     const rows = csvData.split("\n");
     for (let i = 0; i < rows.length; i++) {

@@ -40,7 +40,6 @@ export const nrelWeatherDataFormSlice = createSlice({
       return state;
     },
     setResources: (state: FormState, action: PayloadAction<Array<SelectorOption>>) => {
-      console.log("This is from redux: ", state);
       state.resources = action.payload;
       return state;
     },

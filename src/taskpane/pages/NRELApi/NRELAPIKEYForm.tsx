@@ -3,7 +3,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useUserStore } from "../../../stores/user/user.store";
 import { isValidEmail } from "../../../utils/validations";
-import Link from "../ui/Link/Link";
+import Link from "../../components/ui/Link/Link";
 
 type FormData = {
   email: string;

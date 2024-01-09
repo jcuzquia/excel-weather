@@ -31,7 +31,7 @@ export const App: React.FC<AppProps> = ({ title, isOfficeInitialized }) => {
           <PrivateRoute exact path="/dashboard">
             <Dashboard />
           </PrivateRoute>
-          <PrivateRoute exact path="/nrel-weather">
+          <PrivateRoute exact path="/dashboard/nrel-weather">
             <NRELWeatherPage />
           </PrivateRoute>
           <PrivateRoute exact path="/profile">

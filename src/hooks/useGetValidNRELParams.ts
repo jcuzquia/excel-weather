@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { NRELResponseQuery, getAttribute } from "../interfaces/NRELQuery";
+import { NRELResponseQuery } from "../interfaces/NRELQuery";
+import { getAttribute } from "../helpers/get-valid-params";
 export const useGetValidNRELParams = (url: string) => {
   const {
     error,

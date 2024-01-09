@@ -71,8 +71,3 @@ export const attributes: QueryAttribute[] = [
   { attribute: "ghuv-280-400", name: "Solar (UV) wavelengths 280-400 nanometers", selected: false },
   { attribute: "ghuv-295-385", name: "Solar (UV) wavelengths 295-385 nanometers", selected: false },
 ];
-
-export const getAttribute = (attr: string) => {
-  const foundAttribute = attributes.find((attribute) => attribute.attribute === attr);
-  return foundAttribute;
-};

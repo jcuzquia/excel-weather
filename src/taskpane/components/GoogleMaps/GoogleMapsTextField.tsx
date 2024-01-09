@@ -1,11 +1,8 @@
 import { Autocomplete, Box, TextField } from "@mui/material";
-import React, { ChangeEvent, FC, useEffect } from "react";
-import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocomplete";
-import { ICoordinates } from "../../../interfaces/coordinates";
-import { setAddress, setLocation } from "../../../redux/coordinatesSlice";
-import { clearResponse } from "../../../redux/nrelQuerySlice";
-import { usePlacesStore } from "../../../stores/places/places.store";
+import React, { ChangeEvent, FC } from "react";
+import usePlacesAutocomplete from "use-places-autocomplete";
 import { useNRELApiStore } from "../../../stores/nrel-api/nrel-api.store";
+import { usePlacesStore } from "../../../stores/places/places.store";
 
 interface Props {
   isError: boolean;
@@ -35,6 +32,7 @@ const GoogleMapsTextField: FC<Props> = ({ isError, error }) => {
   const handleSelect = async (_event: ChangeEvent<HTMLInputElement>, newValue: string | null) => {
     setValue(newValue, false);
     clearSuggestions();
+    setNRELResponseQuery(undefined);
     fetchSelectedCoordinates(newValue);
   };
 
@@ -58,8 +56,7 @@ const GoogleMapsTextField: FC<Props> = ({ isError, error }) => {
         fullWidth
         onChange={handleSelect}
         onInputChange={handleAddressChange}
-        isOptionEqualToValue={(option, value) => {
-          console.log("Option", option, "Value", value);
+        isOptionEqualToValue={(_option, _value) => {
           return false;
         }}
         renderInput={(params) => (
