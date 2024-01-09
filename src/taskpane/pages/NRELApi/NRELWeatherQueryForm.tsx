@@ -11,14 +11,14 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 
-import { useForm } from "react-hook-form";
-import { useNRELApiStore } from "../../../stores/nrel-api/nrel-api.store";
-import ValidParamsCard from "./ValidParams.Card";
-import { useUserStore } from "../../../stores/user/user.store";
-import { usePlacesStore } from "../../../stores/places/places.store";
 import { httpsCallable } from "firebase/functions";
+import { useForm } from "react-hook-form";
 import { writeWeatherDataToOfficeDocument } from "../../../commands/commands";
 import { functions } from "../../../firebase/config";
+import { useNRELApiStore } from "../../../stores/nrel-api/nrel-api.store";
+import { usePlacesStore } from "../../../stores/places/places.store";
+import { useUserStore } from "../../../stores/user/user.store";
+import ValidParamsCard from "./ValidParams.Card";
 
 type FormData = {
   selectedResourceApiUrl: string;
@@ -50,6 +50,7 @@ const NRELWeatherQueryForm = () => {
   const setSelectedResourceApi = useNRELApiStore((state) => state.setSelectedResourceApi);
   const setSelectedYear = useNRELApiStore((state) => state.setSelectedYear);
   const setSelectedInterval = useNRELApiStore((state) => state.setSelectedInterval);
+  const setSelectedParameters = useNRELApiStore((state) => state.setSelectedParameters);
   const setIntervals = useNRELApiStore((state) => state.setIntervals);
   const setYears = useNRELApiStore((state) => state.setYears);
   const updateIntervals = useNRELApiStore((state) => state.updateIntervals);
@@ -87,6 +88,18 @@ const NRELWeatherQueryForm = () => {
     updateParameterList();
   };
 
+  const onResourceChange = () => {
+    setSelectedYear(undefined);
+    setSelectedInterval(undefined);
+    setSelectedParameters(undefined);
+
+    setSelectedOutput(getValues("selectedResourceApiUrl"));
+    setSelectedResourceApi(getValues("selectedResourceApiUrl"));
+    updateIntervals();
+    updateYears();
+    updateParameterList();
+  };
+
   return (
     <Box display={"flex"} flexDirection={"column"} component={"form"} onSubmit={handleSubmit(onFormSubmit)} mb={5}>
       <Paper elevation={1}>
@@ -101,7 +114,7 @@ const NRELWeatherQueryForm = () => {
               {...register("selectedResourceApiUrl", {
                 required: "This field is required",
                 onChange: (_e) => {
-                  updateValues();
+                  onResourceChange();
                 },
               })}
               error={!!errors.selectedResourceApiUrl}
