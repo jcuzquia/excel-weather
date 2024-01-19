@@ -54,12 +54,15 @@ export const SettingsMenu = () => {
               <Typography textAlign="center">Profile</Typography>
             </Link>
           </MenuItem>
-          <MenuItem onClick={handleCloseUserMenu}>
-            <Typography textAlign="center">Account</Typography>
-          </MenuItem>
+
           <MenuItem onClick={handleCloseUserMenu}>
             <Link href="/dashboard">
-              <Typography textAlign="center">Dashboard</Typography>
+              <Typography textAlign="center">Eng Dashboard</Typography>
+            </Link>
+          </MenuItem>
+          <MenuItem onClick={handleCloseUserMenu}>
+            <Link href="/program-dashboard">
+              <Typography textAlign="center">Program Dashboard</Typography>
             </Link>
           </MenuItem>
           <MenuItem onClick={handleCloseUserMenu}>

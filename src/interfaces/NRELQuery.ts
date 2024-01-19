@@ -21,8 +21,8 @@ export interface NRELResponseQuery {
 export interface NRELQueryOutput {
   apiDocs?: string;
   apiUrl?: string;
-  availableIntervals?: Array<number>;
-  availableYears?: Array<number | string>;
+  availableIntervals?: Array<string>;
+  availableYears?: Array<string>;
   displayName?: string;
   enabled?: boolean;
   links?: Array<QueryLinkObject>;

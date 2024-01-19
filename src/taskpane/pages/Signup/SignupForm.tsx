@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import { FirebaseError } from "firebase/app";
-import React from "react";
+import React, { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { useAuthStore } from "../../../stores/auth/auth.store";
@@ -28,11 +28,17 @@ const SignupForm = () => {
   } = useForm<FormData>();
   const createUser = useAuthStore((state) => state.createUser);
   const isAuthLoading = useAuthStore((state) => state.isLoading);
+  const setAuthLoading = useAuthStore((state) => state.setIsLoading);
   const authError = useAuthStore((state) => state.error);
+  const setAuthError = useAuthStore((state) => state.setError);
   const createFirestoreUser = useUserStore((state) => state.createFirestoreUser);
   const isUserLoading = useUserStore((state) => state.isLoading);
   const userError = useUserStore((state) => state.error);
   const history = useHistory();
+  useEffect(() => {
+    setAuthLoading(false);
+    setAuthError(undefined);
+  }, []);
 
   const onSignupUser: SubmitHandler<FormData> = async (data: FormData) => {
     if (!data.username) return;

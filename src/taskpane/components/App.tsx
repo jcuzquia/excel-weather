@@ -9,6 +9,7 @@ import PrivateRoute from "./Protection/PrivateRoute";
 import Layout from "./ui/Layout/Layout";
 import { Progress } from "./ui";
 import ProfilePage from "../pages/Profile/ProfilePage";
+import ProgramDashboard from "../pages/ProgramDashboard/ProgramDashboard";
 
 export interface AppProps {
   title: string;
@@ -33,6 +34,9 @@ export const App: React.FC<AppProps> = ({ title, isOfficeInitialized }) => {
           </PrivateRoute>
           <PrivateRoute exact path="/dashboard/nrel-weather">
             <NRELWeatherPage />
+          </PrivateRoute>
+          <PrivateRoute exact path="/program-dashboard">
+            <ProgramDashboard />
           </PrivateRoute>
           <PrivateRoute exact path="/profile">
             <ProfilePage />

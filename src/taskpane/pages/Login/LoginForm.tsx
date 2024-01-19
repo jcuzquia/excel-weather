@@ -37,7 +37,9 @@ const LoginForm = () => {
   const onLoginUser: SubmitHandler<FormData> = async (data: FormData) => {
     try {
       const user = await loginUser(data.email, data.password);
-      setFirestoreUser(user);
+      if (user) {
+        setFirestoreUser(user);
+      }
     } catch (error) {}
     history.push("/dashboard");
   };
@@ -113,7 +115,7 @@ const LoginForm = () => {
             </Link>
           </Grid>
           <Grid item>
-            <Link href="#" variant="body2">
+            <Link href="/signup" variant="body2">
               {"Don't have an account? Sign Up"}
             </Link>
           </Grid>

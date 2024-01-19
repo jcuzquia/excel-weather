@@ -67,7 +67,7 @@ const g = getGlobal() as any;
 g.action = action;
 
 export function writeWeatherDataToOfficeDocument(csvData: string, worksheetName: string): Promise<any> {
-  return Excel.run(function (context) {
+  return Excel.run(async function (context) {
     const wb = context.workbook;
     const ws = wb.worksheets.add(worksheetName);
 
@@ -81,6 +81,9 @@ export function writeWeatherDataToOfficeDocument(csvData: string, worksheetName:
       }
     }
     ws.activate();
-    return context.sync();
+    let rng = ws.getRange("A1");
+    rng.select();
+
+    return await context.sync();
   });
 }

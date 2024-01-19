@@ -17,7 +17,6 @@ export interface UserState {
   createFirestoreUser: (user: User) => Promise<IUser>;
   setFirestoreUser: (user: User) => void;
   saveAndValidateAPIKey: (apikey: string, email?: string) => void;
-  setLoading: (loading: boolean) => void;
 }
 
 const storeApi: StateCreator<UserState> = (set, get) => ({
@@ -26,8 +25,8 @@ const storeApi: StateCreator<UserState> = (set, get) => ({
   error: undefined,
   setFirestoreUser: async () => {
     set((state) => ({ ...state, isLoading: true, error: undefined }));
-    const id = useAuthStore.getState().currentUser.uid;
     try {
+      const id = useAuthStore.getState().currentUser.uid;
       const iuser = (await getDoc(db.user(id))).data();
       set((state) => ({ ...state, user: iuser, isLoading: false }));
     } catch (error) {
@@ -70,9 +69,6 @@ const storeApi: StateCreator<UserState> = (set, get) => ({
       set((state) => ({ ...state, isLoading: false, error: error }));
     }
   },
-  setLoading: (isLoading: boolean) => {
-    set((state) => ({ ...state, isLoading }));
-  },
 
   createFirestoreUser: async (user: User) => {
     set((state) => ({ ...state, isLoading: true, error: undefined }));
@@ -90,23 +86,6 @@ const storeApi: StateCreator<UserState> = (set, get) => ({
       return null;
     }
   },
-
-  // getFireStoreUser: async (email: string, password: string) => {
-  //   try {
-  //     const response = await signInWithEmailAndPassword(auth, email, password);
-
-  //     const userDoc = await getDoc(db.user(response.user.uid));
-
-  //     const user = userDoc.data();
-
-  //     return user;
-  //   } catch (error) {
-  //     if (error instanceof FirebaseError) {
-  //       return error.message;
-  //     }
-  //     return error;
-  //   }
-  // },
 });
 
 export const useUserStore = create<UserState>()(persist(storeApi, { name: "user-store" }));

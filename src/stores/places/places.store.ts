@@ -20,7 +20,7 @@ export interface PlacesState {
   fetchSelectedCoordinates: (selectedAddress: string) => void;
 }
 
-const storeApi: StateCreator<PlacesState> = (set) => ({
+const storeApi: StateCreator<PlacesState> = (set, get) => ({
   isLoading: false,
   selectedAddress: undefined,
   selectedLocation: undefined,
@@ -59,7 +59,7 @@ const storeApi: StateCreator<PlacesState> = (set) => ({
     set((state) => ({ ...state, isLoading }));
   },
   clearCoordinates: () => {
-    set((state) => ({ ...state, selectedLocation: undefined, selectedAddress: undefined, error: undefined }));
+    set((state) => ({ ...state, selectedLocation: get().userLocation, selectedAddress: undefined, error: undefined }));
   },
 });
 

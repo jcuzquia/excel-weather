@@ -12,26 +12,24 @@ export interface NRELAPIState {
   isLoading: boolean;
   error?: Error;
   nrelResponseQuery?: NRELResponseQuery;
-  selectedResourceApi?: string;
+  selectedResource: string;
+  selectedResourceApiUrl: string;
   selectedQueryOutput?: NRELQueryOutput;
-  selectedYear?: string | number;
-  selectedInterval?: string | number;
-  selectedParameters?: Array<string | number>;
+  selectedYear: string;
+  selectedInterval: string;
+  selectedParameters: Array<string>;
 
-  intervals: Array<string | number>;
-  years: Array<string | number>;
+  intervals: Array<string>;
+  years: Array<string>;
   validParameters: SelectorOption[];
   setNRELResponseQuery: (res: NRELResponseQuery) => void;
-  setSelectedOutputBySelectedResource: (selectedNrelResponseQuery: string) => void;
   fetchNRELResponseQuery: (selectedLocation: LatLng) => void;
-  setSelectedResourceApi: (resource: string) => void;
-  setSelectedYear: (year: string | number) => void;
-  setSelectedInterval: (interval: string | number) => void;
-  setSelectedParameters: (selectedParameters: Array<string | number>) => void;
+  setSelectedResource: (resource: string) => void;
+  setSelectedYear: (year: string) => void;
+  setSelectedInterval: (interval: string) => void;
+  setSelectedParameters: (selectedParameters: Array<string>) => void;
   updateIntervals: () => void;
-  setIntervals: (intervals: Array<string | number>) => void;
   updateYears: () => void;
-  setYears: (years: Array<string | number>) => void;
   updateParameterList: () => void;
 }
 
@@ -39,29 +37,24 @@ const storeApi: StateCreator<NRELAPIState> = (set, get) => ({
   isLoading: false,
   nrelResponseQuery: undefined,
   error: undefined,
-  selectedResourceApi: undefined,
+  selectedResource: "",
+  selectedResourceApiUrl: "",
   selectedQueryOutput: undefined,
-  selectedYear: undefined,
-  selectedInterval: undefined,
-  selectedParameters: undefined,
+  selectedYear: "",
+  selectedInterval: "",
+  selectedParameters: [],
   intervals: [],
   years: [],
   validParameters: [],
-  setSelectedParameters: (selectedParameters: Array<string | number>) => {
+
+  setSelectedParameters: (selectedParameters: Array<string>) => {
     set((state) => ({ ...state, selectedParameters: selectedParameters }));
   },
-  setIntervals: (intervals: Array<string | number>) => {
-    set((state) => ({ ...state, intervals }));
-  },
-  setYears: (years: Array<string | number>) => {
-    set((state) => ({ ...state, years }));
-  },
+
   updateParameterList: async () => {
-    console.log("UPDATING PARAMETER LIST");
-    const selectedResourceApi = get().selectedResourceApi;
+    const selectedResourceApi = get().selectedQueryOutput.apiUrl;
     const selectedInterval = get().selectedInterval;
     const selectedYear = get().selectedYear;
-    console.log(selectedResourceApi, selectedInterval, selectedYear);
     if (!selectedResourceApi || selectedResourceApi.trim().length === 0 || !selectedYear || !selectedInterval) {
       set((state) => ({ ...state, validParameters: [] }));
     } else {
@@ -78,10 +71,10 @@ const storeApi: StateCreator<NRELAPIState> = (set, get) => ({
       set((state) => ({ ...state, intervals: intervals }));
     }
   },
-  setSelectedYear: (year) => {
+  setSelectedYear: (year?) => {
     set((state) => ({ ...state, selectedYear: year }));
   },
-  setSelectedInterval: (interval) => {
+  setSelectedInterval: (interval?) => {
     set((state) => ({ ...state, selectedInterval: interval }));
   },
   updateYears: () => {
@@ -97,11 +90,8 @@ const storeApi: StateCreator<NRELAPIState> = (set, get) => ({
   setNRELResponseQuery: (res: NRELResponseQuery) => {
     set((state) => ({ ...state, nrelResponseQuery: res }));
   },
-  setSelectedOutputBySelectedResource: (selectedResourceApiUrl: string) => {
-    const output = get().nrelResponseQuery.outputs.find((o) => o.apiUrl === selectedResourceApiUrl);
-    set((state) => ({ ...state, selectedQueryOutput: output, selectedResourceApi: selectedResourceApiUrl }));
-  },
-  setSelectedResourceApi: (resource: string) => {
+
+  setSelectedResource: (resource: string) => {
     set((state) => ({ ...state, selectedResource: resource }));
   },
 

@@ -8,7 +8,7 @@ interface Props {
 }
 
 const ValidParamsCard = ({ paramsOptions }: Props) => {
-  const [checkedValues, setCheckedValues] = React.useState<Array<string | number>>([]);
+  const [checkedValues, setCheckedValues] = React.useState<Array<string>>([]);
   const setSelectedParameters = useNRELApiStore((state) => state.setSelectedParameters);
 
   const handleSelectAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +33,6 @@ const ValidParamsCard = ({ paramsOptions }: Props) => {
     });
   };
 
-  console.log("this are the parameters", useNRELApiStore.getState().selectedParameters);
   return (
     <Paper>
       <Box display={"flex"} flexDirection={"column"} mt={1} ml={1}>

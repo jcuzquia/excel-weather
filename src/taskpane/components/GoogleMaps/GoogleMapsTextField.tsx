@@ -3,6 +3,7 @@ import React, { ChangeEvent, FC } from "react";
 import usePlacesAutocomplete from "use-places-autocomplete";
 import { useNRELApiStore } from "../../../stores/nrel-api/nrel-api.store";
 import { usePlacesStore } from "../../../stores/places/places.store";
+import { useMapStore } from "../../../stores/map/map.store";
 
 interface Props {
   isError: boolean;
@@ -13,6 +14,7 @@ const GoogleMapsTextField: FC<Props> = ({ isError, error }) => {
   const clearCoordinates = usePlacesStore((state) => state.clearCoordinates);
   const fetchSelectedCoordinates = usePlacesStore((state) => state.fetchSelectedCoordinates);
   const setNRELResponseQuery = useNRELApiStore((state) => state.setNRELResponseQuery);
+  const setZoom = useMapStore((state) => state.setZoom);
 
   const {
     value,
@@ -25,13 +27,17 @@ const GoogleMapsTextField: FC<Props> = ({ isError, error }) => {
     if (newInputValue.trim().length === 0) {
       clearCoordinates();
       setNRELResponseQuery(undefined);
+      setZoom(1);
+    } else {
+      setValue(newInputValue);
+      setZoom(17);
     }
-    setValue(newInputValue);
   };
 
   const handleSelect = async (_event: ChangeEvent<HTMLInputElement>, newValue: string | null) => {
     setValue(newValue, false);
     clearSuggestions();
+    setZoom(17);
     setNRELResponseQuery(undefined);
     fetchSelectedCoordinates(newValue);
   };

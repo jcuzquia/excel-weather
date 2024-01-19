@@ -22,6 +22,8 @@ export interface AuthState {
   createUser: (username: string, email: string, password: string) => Promise<FirebaseUser | FirebaseError>;
   checkAuthStatus: () => FirebaseUser | undefined;
   setLoggedIn: (user?: FirebaseUser) => void;
+  setIsLoading: (isLoading: boolean) => void;
+  setError: (error: Error | undefined) => void;
 }
 
 const storeApi: StateCreator<AuthState> = (set) => ({
@@ -86,6 +88,13 @@ const storeApi: StateCreator<AuthState> = (set) => ({
       }
       return error;
     }
+  },
+
+  setIsLoading: (isLoading: boolean) => {
+    set((state) => ({ ...state, isLoading }));
+  },
+  setError: (error: Error | undefined) => {
+    set((state) => ({ ...state, error }));
   },
 });
 
