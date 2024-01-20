@@ -1,17 +1,16 @@
-import { LatLng } from "use-places-autocomplete";
 import { StateCreator, create } from "zustand";
 import { persist } from "zustand/middleware";
 import { geocodingApi } from "../../api/google-api";
 import { getUserLocation } from "../../helpers";
-import { GoogleGeocodeResponse } from "../../interfaces/coordinates";
+import { GoogleGeocodeResponse, ICoordinates } from "../../interfaces/coordinates";
 import { GOOGLE_MAPS_API_KEY } from "../../lib/constants";
 
 export interface PlacesState {
   isLoading: boolean;
   error?: Error;
-  userLocation?: LatLng;
+  userLocation: ICoordinates;
   selectedAddress?: string;
-  selectedLocation?: LatLng;
+  selectedLocation?: ICoordinates;
   setUserLocation: () => Promise<void>;
   setIsLoading: (isLoading: boolean) => void;
   setSelectedAddress: (selectedAddress: string) => void;
@@ -20,10 +19,10 @@ export interface PlacesState {
   fetchSelectedCoordinates: (selectedAddress: string) => void;
 }
 
-const storeApi: StateCreator<PlacesState> = (set, get) => ({
+const storeApi: StateCreator<PlacesState> = (set) => ({
   isLoading: false,
   selectedAddress: undefined,
-  selectedLocation: undefined,
+  selectedLocation: { lat: 40.73061, lng: -73.935242 },
   error: undefined,
   userLocation: { lat: 40.73061, lng: -73.935242 },
 
@@ -35,10 +34,10 @@ const storeApi: StateCreator<PlacesState> = (set, get) => ({
     set((state) => ({ ...state, isLoading: true, selectedLocation: undefined, error: undefined }));
     try {
       const res = await geocodingApi<GoogleGeocodeResponse>(`${selectedAddress}&key=${GOOGLE_MAPS_API_KEY}`);
-      const selectedLocation: LatLng = res.data.results[0].geometry.location;
+      const selectedLocation: google.maps.LatLngLiteral = res.data.results[0].geometry.location;
       set((state) => ({ ...state, selectedLocation, isLoading: false, selectedAddress }));
     } catch (error) {
-      set((state) => ({ ...state, selectedLocation: undefined, isLoading: false }));
+      set((state) => ({ ...state, selectedLocation: { lat: 40.73061, lng: -73.935242 }, isLoading: false }));
     }
   },
 
@@ -59,7 +58,12 @@ const storeApi: StateCreator<PlacesState> = (set, get) => ({
     set((state) => ({ ...state, isLoading }));
   },
   clearCoordinates: () => {
-    set((state) => ({ ...state, selectedLocation: get().userLocation, selectedAddress: undefined, error: undefined }));
+    set((state) => ({
+      ...state,
+      selectedLocation: { lat: 40.73061, lng: -73.935242 },
+      selectedAddress: undefined,
+      error: undefined,
+    }));
   },
 });
 

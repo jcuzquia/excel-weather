@@ -10,6 +10,7 @@ import Layout from "./ui/Layout/Layout";
 import { Progress } from "./ui";
 import ProfilePage from "../pages/Profile/ProfilePage";
 import ProgramDashboard from "../pages/ProgramDashboard/ProgramDashboard";
+import HeatMap from "../pages/HeatMap/HeatMap";
 
 export interface AppProps {
   title: string;
@@ -37,6 +38,9 @@ export const App: React.FC<AppProps> = ({ title, isOfficeInitialized }) => {
           </PrivateRoute>
           <PrivateRoute exact path="/program-dashboard">
             <ProgramDashboard />
+          </PrivateRoute>
+          <PrivateRoute exact path="/program-dashboard/heatmap">
+            <HeatMap />
           </PrivateRoute>
           <PrivateRoute exact path="/profile">
             <ProfilePage />

@@ -15,6 +15,7 @@ const GoogleMapsTextField: FC<Props> = ({ isError, error }) => {
   const fetchSelectedCoordinates = usePlacesStore((state) => state.fetchSelectedCoordinates);
   const setNRELResponseQuery = useNRELApiStore((state) => state.setNRELResponseQuery);
   const setZoom = useMapStore((state) => state.setZoom);
+  const removeMarkerFromMap = useMapStore((state) => state.removeMarkerFromMap);
 
   const {
     value,
@@ -24,20 +25,27 @@ const GoogleMapsTextField: FC<Props> = ({ isError, error }) => {
   } = usePlacesAutocomplete({ debounce: 300 });
 
   const handleAddressChange = (_event: ChangeEvent<HTMLInputElement>, newInputValue: string) => {
+    console.log("handle address change");
     if (newInputValue.trim().length === 0) {
       clearCoordinates();
       setNRELResponseQuery(undefined);
       setZoom(1);
     } else {
       setValue(newInputValue);
-      setZoom(17);
+      setZoom(1);
     }
   };
 
   const handleSelect = async (_event: ChangeEvent<HTMLInputElement>, newValue: string | null) => {
+    console.log("handle selectChange");
     setValue(newValue, false);
     clearSuggestions();
-    setZoom(17);
+    if (newValue.trim().length > 0) {
+      setZoom(17);
+    } else {
+      setZoom(1);
+      removeMarkerFromMap();
+    }
     setNRELResponseQuery(undefined);
     fetchSelectedCoordinates(newValue);
   };

@@ -9,12 +9,14 @@ const ProgramDashboard = () => {
       <Typography variant="subtitle1" color={"white"}>
         Program Team Options
       </Typography>
-      <DashboardOption
-        description="Create Heat map for a new type of analysis"
-        href="/program-dashboard/heatmap"
-        icon={<MapTwoTone height={40} />}
-        subtitle="Heat Maps"
-      />
+      <Box display={"flex"} flexDirection={"column"} mt={2}>
+        <DashboardOption
+          description="Create Heat map for a new type of analysis"
+          href="/program-dashboard/heatmap"
+          icon={<MapTwoTone height={40} />}
+          subtitle="Heat Maps"
+        />
+      </Box>
     </Box>
   );
 };
